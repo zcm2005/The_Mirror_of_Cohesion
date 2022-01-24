@@ -10,12 +10,17 @@
  * See the Mulan PubL v2 for more details.
  */
 
-
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace MinecraftLevelToolCore
 {
-    public class Class1
-    {
-
-    }
+    /// <summary>
+    /// 包括但不限于以下原因，可能产生此异常：
+    /// 找不到对应的session.lock文件
+    /// </summary>
+    public class LevelNotFoundException : Exception{ }
 }

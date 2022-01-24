@@ -1,4 +1,6 @@
-﻿/*
+﻿using MinecraftLevelToolCore;
+
+/*
  * Copyright (c) 2022 ZCM
  * MinecraftLevelTools is licensed under Mulan PubL v2.
  * You can use this software according to the terms and conditions of the Mulan PubL v2.
@@ -11,11 +13,9 @@
  */
 
 
+Console.WriteLine("本程序不是 Minecraft 官方产品、不是来自 Minecraft 且未经 Minecraft 认可。");
+Console.WriteLine("本程序是与核心库配套发布的命令行工具，主要用于开发和调试，没有为本命令行工具制作说明文档的计划。");
+Console.WriteLine("在完成核心库后，可能会制作配套的图形界面工具。");
 
-namespace MinecraftLevelToolCore
-{
-    public class Class1
-    {
+Level l=new(Console.ReadLine());
 
-    }
-}
