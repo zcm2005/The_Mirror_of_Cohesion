@@ -7,6 +7,8 @@
 
 使用本工具有可能损坏存档或导致各种类型的损失，作为开源软件，本人对此不提供任何担保。使用前，请做好备份工作。
 
+本人的邮箱：2601973667@qq.com，会经常查看
+
 本项目不是 Minecraft 官方产品、不是来自 Minecraft 且未经 Minecraft 认可。
 
 This program is released under license AGPL-3.0-only.
