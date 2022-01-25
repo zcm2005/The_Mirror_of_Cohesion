@@ -33,7 +33,10 @@ namespace MinecraftNBTLibrary
     /// </summary>
     public static class NBT
     {
-
+        public static void abc()
+        {
+            
+        }
     }
 
 }
