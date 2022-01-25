@@ -94,6 +94,7 @@ namespace MinecraftLevelToolCore
             if (sessionlock != null)
             {
                 sessionlock.Close();
+                sessionlock.Dispose();
                 sessionlock = null;
             }
 
@@ -104,5 +105,21 @@ namespace MinecraftLevelToolCore
             Close();
         }
 
+        /// <summary>
+        /// 若未打开存档，则返回错误
+        /// </summary>
+        /// <exception cref="LevelNotOpenException"></exception>
+        private void IsOpen()
+        {
+            if(sessionlock == null)
+                throw new LevelNotOpenException();
+        }
+
+
+        public string LevelName
+        {
+            get;
+            set;
+        }
     }
 }
