@@ -1,17 +1,25 @@
 ﻿using MinecraftLevelToolCore;
 
 /*
- * Copyright (c) 2022 ZCM
- * MinecraftLevelTools is licensed under Mulan PubL v2.
- * You can use this software according to the terms and conditions of the Mulan PubL v2.
- * You may obtain a copy of Mulan PubL v2 at:
- *          http://license.coscl.org.cn/MulanPubL-2.0
- * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
- * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
- * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
- * See the Mulan PubL v2 for more details.
- */
+This file is part of MinecraftLevelTools.
 
+This product is unofficial and not from Minecraft or approved by Minecraft.
+
+Copyright (C) 2022  ZCM
+
+This program is released under license AGPL-3.0-only.
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License, Version 3.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License
+along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 
 Console.WriteLine("本程序不是 Minecraft 官方产品、不是来自 Minecraft 且未经 Minecraft 认可。");
 Console.WriteLine("本程序是与核心库配套发布的命令行工具，主要用于开发和调试，没有为本命令行工具制作说明文档的计划。");
