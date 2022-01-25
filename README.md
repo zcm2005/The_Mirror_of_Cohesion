@@ -9,4 +9,5 @@
 
 本项目不是 Minecraft 官方产品、不是来自 Minecraft 且未经 Minecraft 认可。
 
+This program is released under license AGPL-3.0-only.
 
