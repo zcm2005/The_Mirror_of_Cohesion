@@ -92,10 +92,7 @@ namespace MinecraftNBTLibrary
             return flag;
         }
 
-        private static void abc()
-        {
-            new NBTNodeList<int>("fds").Add(new NBTNodeInt("a", 1));
-        }
+
     }
 
 }
