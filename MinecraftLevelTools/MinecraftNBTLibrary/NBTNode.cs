@@ -33,13 +33,13 @@ namespace MinecraftNBTLibrary
     public abstract class NBTNode
     {
 
-        public abstract byte GetTypeIndex();
+        public abstract byte TypeIndex { get; }
 
         public abstract byte[] ToBytes();
 
         internal NBTNodeType Type { private init; get; }
 
-        protected NBTNode() { Type = (NBTNodeType)GetTypeIndex(); }
+        protected NBTNode() { Type = (NBTNodeType)TypeIndex; }
 
         public NBTNode? Parent;
 
@@ -53,7 +53,7 @@ namespace MinecraftNBTLibrary
         {
         }
 
-        public override sealed byte GetTypeIndex() => 0;
+        public override sealed byte TypeIndex => 0;
 
 
         public override byte[] ToBytes()
@@ -66,26 +66,19 @@ namespace MinecraftNBTLibrary
 
     }
 
-    public abstract class NBTNodeData : NBTNode
+    public abstract class NBTNodeData<T> : NBTNode
     {
 
-        public string? Name;
+        public string Name;
 
-        protected NBTNodeData() : base()
-        {
-            Name = null;
-        }
 
-        protected NBTNodeData(string? name) : base()
+        public NBTNodeData(string name, T data) : base()
         {
+            Value = data;
             Name = name;
         }
 
-        public abstract object Value
-        {
-            get;
-            set;
-        }
+        public virtual T Value { get; set; }
 
         protected byte[] PreBytes()
         {
@@ -95,88 +88,56 @@ namespace MinecraftNBTLibrary
 
             }
             byte[] bytes = new byte[3 + Name.Length];
-            bytes[0] = GetTypeIndex();
+            bytes[0] = TypeIndex;
             bytes[1] = ((byte)(Name.Length >> 8));
             bytes[2] = ((byte)(Name.Length));
             Encoding.UTF8.GetBytes(Name).CopyTo(bytes, 3);
             return bytes;
         }
 
+        public abstract byte[] GetBytesForList();
+
     }
 
-    public class NBTNodeByte : NBTNodeData
+
+    public class NBTNodeByte : NBTNodeData<byte>
     {
-        public override sealed byte GetTypeIndex() => 1;
+        public override sealed byte TypeIndex => 1;
 
-        public static bool operator ==(NBTNodeByte a, NBTNodeByte b) => (a.Name == b.Name && a.value == b.value);
-        public static bool operator !=(NBTNodeByte a, NBTNodeByte b) => (a.Name != b.Name || a.value != b.value);
+        public static bool operator ==(NBTNodeByte a, NBTNodeByte b) => (a.Name == b.Name && a.Value == b.Value);
+        public static bool operator !=(NBTNodeByte a, NBTNodeByte b) => (a.Name != b.Name || a.Value != b.Value);
 
-        internal byte value;
 
-        public NBTNodeByte(string name, byte data) : base(name) => value = data;
+        public NBTNodeByte(string name, byte data) : base(name, data) { }
 
-        public override object Value
-        {
-            get
-            {
-                return value;
-            }
-            set
-            {
-                if (value is byte t)
-                {
-                    this.value = t;
-                }
-                else
-                {
-                    throw new WrongDataTypeException();
-                }
-            }
-        }
+        public override byte[] GetBytesForList() => BitConverter.GetBytes(Value);
 
         public override byte[] ToBytes()
         {
             byte[] pre = PreBytes();
             byte[] result = new byte[pre.Length + 1];
             pre.CopyTo(result, 0);
-            result[result.Length - 1] = value;
+            result[result.Length - 1] = Value;
             return result;
         }
     }
 
-    public class NBTNodeShort : NBTNodeData
+    public class NBTNodeShort : NBTNodeData<short>
     {
-        public override sealed byte GetTypeIndex() => 2;
+        public override sealed byte TypeIndex => 2;
 
-        public NBTNodeShort(string name, short data) : base(name) => value = data;
+        public static bool operator ==(NBTNodeShort a, NBTNodeShort b) => (a.Name == b.Name && a.Value == b.Value);
+        public static bool operator !=(NBTNodeShort a, NBTNodeShort b) => (a.Name != b.Name || a.Value != b.Value);
 
-        public static bool operator ==(NBTNodeShort a, NBTNodeShort b) => (a.Name == b.Name && a.value == b.value);
-        public static bool operator !=(NBTNodeShort a, NBTNodeShort b) => (a.Name != b.Name || a.value != b.value);
+        public NBTNodeShort(string name, short data) : base(name, data) { }
 
-        internal short value;
-        public override object Value
-        {
-            get
-            {
-                return value;
-            }
-            set
-            {
-                if (value is short t)
-                {
-                    this.value = t;
-                }
-                else
-                {
-                    throw new WrongDataTypeException();
-                }
-            }
-        }
+        public override byte[] GetBytesForList() => BitConverter.GetBytes(Value);
+
 
         public override byte[] ToBytes()
         {
             byte[] pre = PreBytes();
-            byte[] data = BitConverter.GetBytes(value);
+            byte[] data = BitConverter.GetBytes(Value);
             byte[] result = new byte[pre.Length + data.Length];
             pre.CopyTo(result, 0);
             data.CopyTo(result, pre.Length);
@@ -185,38 +146,72 @@ namespace MinecraftNBTLibrary
 
     }
 
-    public class NBTNodeInt : NBTNodeData
+    public class NBTNodeInt : NBTNodeData<int>
     {
-        internal int value;
+        public static bool operator ==(NBTNodeInt a, NBTNodeInt b) => (a.Name == b.Name && a.Value == b.Value);
+        public static bool operator !=(NBTNodeInt a, NBTNodeInt b) => (a.Name != b.Name || a.Value != b.Value);
 
-        public NBTNodeInt(string name, int data) : base(name) => value = data;
-
-        public static bool operator ==(NBTNodeInt a, NBTNodeInt b) => (a.Name == b.Name && a.value == b.value);
-        public static bool operator !=(NBTNodeInt a, NBTNodeInt b) => (a.Name != b.Name || a.value != b.value);
-
-        public override object Value
-        {
-            get { return value; }
-            set
-            {
-                if (value is int t)
-                {
-                    this.value = t;
-                }
-                else
-                {
-                    throw new WrongDataTypeException();
-                }
-            }
-        }
-
-        public override sealed byte GetTypeIndex() => 3;
+        public NBTNodeInt(string name, int data) : base(name, data) { }
+        public override byte[] GetBytesForList() => BitConverter.GetBytes(Value);
 
 
         public override byte[] ToBytes()
         {
             byte[] pre = PreBytes();
-            byte[] data = BitConverter.GetBytes(value);
+            byte[] data = BitConverter.GetBytes(Value);
+            byte[] result = new byte[pre.Length + data.Length];
+            pre.CopyTo(result, 0);
+            data.CopyTo(result, pre.Length);
+            return result;
+        }
+
+
+        public override sealed byte TypeIndex => 3;
+
+    }
+
+    public class NBTNodeLong : NBTNodeData<long>
+    {
+        public override byte[] GetBytesForList() => BitConverter.GetBytes(Value);
+
+        public static bool operator ==(NBTNodeLong a, NBTNodeLong b) => (a.Name == b.Name && a.Value == b.Value);
+        public static bool operator !=(NBTNodeLong a, NBTNodeLong b) => (a.Name != b.Name || a.Value != b.Value);
+
+        public override sealed byte TypeIndex => 4;
+
+        public NBTNodeLong(string name, long data) : base(name, data) { }
+
+
+        public override byte[] ToBytes()
+        {
+            byte[] pre = PreBytes();
+            byte[] data = BitConverter.GetBytes(Value);
+            byte[] result = new byte[pre.Length + data.Length];
+            pre.CopyTo(result, 0);
+            data.CopyTo(result, pre.Length);
+            return result;
+        }
+
+    }
+
+    public class NBTNodeFloat : NBTNodeData<float>
+    {
+
+        public override byte[] GetBytesForList() => BitConverter.GetBytes(Value);
+
+        public static bool operator ==(NBTNodeFloat a, NBTNodeFloat b) => (a.Name == b.Name && a.Value == b.Value);
+        public static bool operator !=(NBTNodeFloat a, NBTNodeFloat b) => (a.Name != b.Name || a.Value != b.Value);
+
+        public NBTNodeFloat(string name, float data) : base(name, data) { }
+
+
+        public override sealed byte TypeIndex => 5;
+
+
+        public override byte[] ToBytes()
+        {
+            byte[] pre = PreBytes();
+            byte[] data = BitConverter.GetBytes(Value);
             byte[] result = new byte[pre.Length + data.Length];
             pre.CopyTo(result, 0);
             data.CopyTo(result, pre.Length);
@@ -224,38 +219,24 @@ namespace MinecraftNBTLibrary
         }
     }
 
-    public class NBTNodeLong : NBTNodeData
+    public class NBTNodeDouble : NBTNodeData<double>
     {
-        internal long value;
 
-        public NBTNodeLong(string name, long data) : base(name) => value = data;
+        public override byte[] GetBytesForList() => BitConverter.GetBytes(Value);
 
-        public static bool operator ==(NBTNodeLong a, NBTNodeLong b) => (a.Name == b.Name && a.value == b.value);
-        public static bool operator !=(NBTNodeLong a, NBTNodeLong b) => (a.Name != b.Name || a.value != b.value);
+        public static bool operator ==(NBTNodeDouble a, NBTNodeDouble b) => (a.Name == b.Name && a.Value == b.Value);
+        public static bool operator !=(NBTNodeDouble a, NBTNodeDouble b) => (a.Name != b.Name || a.Value != b.Value);
 
-        public override object Value
-        {
-            get { return value; }
-            set
-            {
-                if (value is long t)
-                {
-                    this.value = t;
-                }
-                else
-                {
-                    throw new WrongDataTypeException();
-                }
-            }
-        }
 
-        public override sealed byte GetTypeIndex() => 4;
+        public NBTNodeDouble(string name, float data) : base(name, data) { }
+
+        public override sealed byte TypeIndex => 6;
 
 
         public override byte[] ToBytes()
         {
             byte[] pre = PreBytes();
-            byte[] data = BitConverter.GetBytes(value);
+            byte[] data = BitConverter.GetBytes(Value);
             byte[] result = new byte[pre.Length + data.Length];
             pre.CopyTo(result, 0);
             data.CopyTo(result, pre.Length);
@@ -263,300 +244,111 @@ namespace MinecraftNBTLibrary
         }
     }
 
-    public class NBTNodeFloat : NBTNodeData
+    public abstract class NBTNodeDataCollection<T> : NBTNodeData<List<T>>, ICollection<T>
     {
-        internal float value;
-
-        public NBTNodeFloat(string name, float data) : base(name) => value = data;
-
-        public static bool operator ==(NBTNodeFloat a, NBTNodeFloat b) => (a.Name == b.Name && a.value == b.value);
-        public static bool operator !=(NBTNodeFloat a, NBTNodeFloat b) => (a.Name != b.Name || a.value != b.value);
-
-
-
-        public override object Value
-        {
-            get { return value; }
-            set
-            {
-                if (value is float t)
-                {
-                    this.value = t;
-                }
-                else
-                {
-                    throw new WrongDataTypeException();
-                }
-            }
-        }
-
-        public override sealed byte GetTypeIndex() => 5;
-
-
-        public override byte[] ToBytes()
-        {
-            byte[] pre = PreBytes();
-            byte[] data = BitConverter.GetBytes(value);
-            byte[] result = new byte[pre.Length + data.Length];
-            pre.CopyTo(result, 0);
-            data.CopyTo(result, pre.Length);
-            return result;
-        }
-    }
-
-    public class NBTNodeDouble : NBTNodeData
-    {
-        internal double value;
-
-        public NBTNodeDouble(double data) => value = data;
-
-        public static bool operator ==(NBTNodeDouble a, NBTNodeDouble b) => (a.Name == b.Name && a.value == b.value);
-        public static bool operator !=(NBTNodeDouble a, NBTNodeDouble b) => (a.Name != b.Name || a.value != b.value);
-
-
-
-        public override object Value
-        {
-            get { return value; }
-            set
-            {
-                if (value is double t)
-                {
-                    this.value = t;
-                }
-                else
-                {
-                    throw new WrongDataTypeException();
-                }
-            }
-        }
-
-        public override sealed byte GetTypeIndex() => 6;
-
-
-        public override byte[] ToBytes()
-        {
-            byte[] pre = PreBytes();
-            byte[] data = BitConverter.GetBytes(value);
-            byte[] result = new byte[pre.Length + data.Length];
-            pre.CopyTo(result, 0);
-            data.CopyTo(result, pre.Length);
-            return result;
-        }
-    }
-
-    public abstract class NBTNodeDataCollection : NBTNodeData, ICollection<NBTNodeData>
-    {
-        public abstract int Count { get; }
-        public abstract bool IsReadOnly { get; }
-
-        public abstract void Add(NBTNodeData item);
-        public abstract void Clear();
-        public abstract bool Contains(NBTNodeData item);
-        public abstract void CopyTo(NBTNodeData[] array, int arrayIndex);
-        public abstract IEnumerator<NBTNodeData> GetEnumerator();
-        public abstract bool Remove(NBTNodeData item);
-
-        protected NBTNodeDataCollection() : base()
+        protected NBTNodeDataCollection(string name, List<T> data) : base(name, data)
         {
         }
 
-        protected NBTNodeDataCollection(string? name) : base(name)
-        {
-            
-        }
+        protected NBTNodeDataCollection(string name) : this(name, new List<T>()) { }
+
+
+        public static bool operator ==(NBTNodeDataCollection<T> a, NBTNodeDataCollection<T> b) => Enumerable.SequenceEqual(a.Value, b.Value);
+
+        public static bool operator !=(NBTNodeDataCollection<T> a, NBTNodeDataCollection<T> b) => !(a == b);
+
+
+        public int Count => Value.Count;
+
+        public bool IsReadOnly => false;
+
+        public virtual void Add(T item) => Value.Add(item);
+        public void Clear() => Value.Clear();
+        public bool Contains(T item) => Value.Contains(item);
+        public void CopyTo(T[] array, int arrayIndex) => Value.CopyTo(array, arrayIndex);
+        public IEnumerator<T> GetEnumerator() => Value.GetEnumerator();
+        public bool Remove(T item) => Value.Remove(item);
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+    }
+
+    public abstract class NBTNodeDataArray<T> : NBTNodeDataCollection<T>, IList<T>
+    {
+        protected NBTNodeDataArray(string name, List<T> data) : base(name, data)
+        {
+        }
+
+        public T this[int index]
+        {
+            set => Value[index] = value;
+            get => Value[index];
+        }
+
+        public int IndexOf(T item) => Value.IndexOf(item);
+        public void Insert(int index, T item) => Value.Insert(index, item);
+        public void RemoveAt(int index) => Value.RemoveAt(index);
 
     }
 
-    public abstract class NBTNodeDataArray : NBTNodeDataCollection, IList<NBTNodeData>
+    public class NBTNodeByteArray : NBTNodeDataArray<byte>
     {
-        public abstract NBTNodeData this[int index] { get; set; }
-
-        public abstract int IndexOf(NBTNodeData item);
-        public abstract void Insert(int index, NBTNodeData item);
-        public abstract void RemoveAt(int index);
-
-        protected NBTNodeDataArray() : base()
-        {
-        }
-
-        protected NBTNodeDataArray(string? name) : base(name)
-        {
-
-        }
-    }
-
-    public class NBTNodeByteArray : NBTNodeDataArray
-    {
-        internal byte[]? value;
-
-        public NBTNodeByteArray() : base() { }
-        public NBTNodeByteArray(string name, byte[] data) : base(name) => value = data;
-
-        public static bool operator ==(NBTNodeByteArray a, NBTNodeByteArray b)
-        {
-
-        }
-        public static bool operator !=(NBTNodeDouble a, NBTNodeDouble b) => (a.Name != b.Name || a.value != b.value);
+        public NBTNodeByteArray(string name, List<byte> data) : base(name, data) { }
+        public NBTNodeByteArray(string name) : this(name, new List<byte>()) { }
 
 
 
-        public override object Value
-        {
-            get
-            {
-                if (value != null)
-                    return value;
-                else
-                    return Array.Empty<byte>();
-            }
-            set
-            {
-                if (value != null)
-                {
-                    if (value is byte[] t)
-                    {
-                        this.value = t;
-                    }
-                    else
-                    {
-                        throw new WrongDataTypeException();
-                    }
-                }
-                else
-                    this.value = null;
-            }
-        }
-
-        public override int Count => throw new NotImplementedException();
-
-        public override bool IsReadOnly => throw new NotImplementedException();
-
-        public override NBTNodeData this[int index] { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
-        public override sealed byte GetTypeIndex() => 7;
+        public override sealed byte TypeIndex => 7;
 
 
         public override byte[] ToBytes()
         {
             byte[] pre = PreBytes();
             byte[] size;
-            if (value == null)
-            {
-                value = Array.Empty<byte>();
-            }
-            size = new NBTNodeInt("size", value.Length).ToBytes();
-            byte[] result = new byte[pre.Length + size.Length + value.Length];
+            size = new NBTNodeInt("size", Value.Count).ToBytes();
+            byte[] result = new byte[pre.Length + size.Length + Value.Count];
             pre.CopyTo(result, 0);
             size.CopyTo(result, pre.Length);
-            value.CopyTo(result, pre.Length + size.Length);
-            if (value.Length == 0)
-            {
-                value = null;
-            }
+            Value.CopyTo(result, pre.Length + size.Length);
             return result;
         }
 
-        public override int IndexOf(NBTNodeData item)
+        public override byte[] GetBytesForList()
         {
-            throw new NotImplementedException();
-        }
-
-        public override void Insert(int index, NBTNodeData item)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void RemoveAt(int index)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void Add(NBTNodeData item)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void Clear()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override bool Contains(NBTNodeData item)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void CopyTo(NBTNodeData[] array, int arrayIndex)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override IEnumerator<NBTNodeData> GetEnumerator()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override bool Remove(NBTNodeData item)
-        {
-            throw new NotImplementedException();
+            byte[] size;
+            size = new NBTNodeInt("size", Value.Count).ToBytes();
+            byte[] result = new byte[size.Length + Value.Count];
+            size.CopyTo(result, 0);
+            Value.CopyTo(result, size.Length);
+            return result;
         }
     }
 
-    public class NBTNodeString : NBTNodeData
+    public class NBTNodeString : NBTNodeData<string>
     {
-        internal string? value;
-
-        public NBTNodeString() { }
-        public NBTNodeString(string data) => value = data;
+        public NBTNodeString(string name, string data) : base(name, data) { }
 
 
-        public override object Value
+        public override sealed byte TypeIndex => 8;
+
+        public override byte[] GetBytesForList()
         {
-            get
-            {
-                if (value != null)
-                    return value;
-                else
-                    return string.Empty;
-            }
-            set
-            {
-                if (value != null)
-                {
-                    if (value is string t)
-                    {
-                        this.value = t;
-                    }
-                    else
-                    {
-                        throw new WrongDataTypeException();
-                    }
-                }
-                else
-                    this.value = null;
-            }
+            byte[] length;
+            byte[] content;
+            content = Encoding.UTF8.GetBytes(Value);
+            length = new NBTNodeShort("length", (short)content.Length).ToBytes();
+            byte[] result = new byte[length.Length + content.Length];
+            length.CopyTo(result, 0);
+            content.CopyTo(result, length.Length);
+            return result;
         }
-
-        public override sealed byte GetTypeIndex() => 8;
-
 
         public override byte[] ToBytes()
         {
             byte[] pre = PreBytes();
             byte[] length;
             byte[] content;
-            if (value == null)
-            {
-                content = Array.Empty<byte>();
-            }
-            else
-            {
-                content = Encoding.UTF8.GetBytes(value);
-            }
-            length = new NBTNodeByte("length", (byte)content.Length).ToBytes();
+            content = Encoding.UTF8.GetBytes(Value);
+            length = new NBTNodeShort("length", (short)content.Length).ToBytes();
             byte[] result = new byte[pre.Length + length.Length + content.Length];
             pre.CopyTo(result, 0);
             length.CopyTo(result, pre.Length);
@@ -565,119 +357,78 @@ namespace MinecraftNBTLibrary
         }
     }
 
-    public class NBTNodeIntArray : NBTNodeDataArray
+    public class NBTNodeIntArray : NBTNodeDataArray<int>
     {
-        internal int[]? value;
-
-        public NBTNodeIntArray() : base() { }
-        public NBTNodeIntArray(string name, int[] data) : base(name) => value = data;
 
 
-        public override object Value
+        public NBTNodeIntArray(string name, List<int> data) : base(name, data) { }
+        public NBTNodeIntArray(string name) : this(name, new List<int>()) { }
+
+
+        public override sealed byte TypeIndex => 11;
+
+        public override byte[] GetBytesForList()
         {
-            get
+            byte[] size;
+            size = new NBTNodeInt("size", Value.Count).ToBytes();
+            byte[] result = new byte[size.Length + Value.Count * 4];
+            size.CopyTo(result, 0);
+            for (int i = 0; i < Value.Count; i++)
             {
-                if (value != null)
-                    return value;
-                else
-                    return Array.Empty<int>();
+                BitConverter.GetBytes(Value[i]).CopyTo(result, size.Length + i * 4);
             }
-            set
-            {
-                if (value != null)
-                {
-                    if (value is int[] t)
-                    {
-                        this.value = t;
-                    }
-                    else
-                    {
-                        throw new WrongDataTypeException();
-                    }
-                }
-                else
-                    this.value = null;
-            }
+            return result;
         }
-
-        public override sealed byte GetTypeIndex() => 11;
-
 
         public override byte[] ToBytes()
         {
             byte[] pre = PreBytes();
             byte[] size;
-            if (value == null)
-            {
-                value = Array.Empty<int>();
-            }
-            size = new NBTNodeInt("size", value.Length).ToBytes();
-            byte[] result = new byte[pre.Length + size.Length + value.Length];
+            size = new NBTNodeInt("size", Value.Count).ToBytes();
+            byte[] result = new byte[pre.Length + size.Length + Value.Count * 4];
             pre.CopyTo(result, 0);
             size.CopyTo(result, pre.Length);
-            value.CopyTo(result, pre.Length + size.Length);
-            if (value.Length == 0)
+            for (int i = 0; i < Value.Count; i++)
             {
-                value = null;
+                BitConverter.GetBytes(Value[i]).CopyTo(result, pre.Length + size.Length + i * 4);
             }
             return result;
         }
     }
 
-    public class NBTNodeLongArray : NBTNodeDataArray
+    public class NBTNodeLongArray : NBTNodeDataArray<long>
     {
-        internal long[]? value;
-
-        public NBTNodeLongArray() : base() { }
-        public NBTNodeLongArray(string name, long[] data) : base(name) => value = data;
+        public NBTNodeLongArray(string name, List<long> data) : base(name, data) { }
+        public NBTNodeLongArray(string name) : this(name, new List<long>()) { }
 
 
-        public override object Value
+        public override sealed byte TypeIndex => 12;
+
+        public override byte[] GetBytesForList()
         {
-            get
+            byte[] size;
+            size = new NBTNodeInt("size", Value.Count).ToBytes();
+            byte[] result = new byte[size.Length + Value.Count * 8];
+            size.CopyTo(result, 0);
+            for (int i = 0; i < Value.Count; i++)
             {
-                if (value != null)
-                    return value;
-                else
-                    return Array.Empty<long>();
+                BitConverter.GetBytes(Value[i]).CopyTo(result, size.Length + i * 8);
             }
-            set
-            {
-                if (value != null)
-                {
-                    if (value is long[] t)
-                    {
-                        this.value = t;
-                    }
-                    else
-                    {
-                        throw new WrongDataTypeException();
-                    }
-                }
-                else
-                    this.value = null;
-            }
+            return result;
         }
-
-        public override sealed byte GetTypeIndex() => 12;
 
 
         public override byte[] ToBytes()
         {
             byte[] pre = PreBytes();
             byte[] size;
-            if (value == null)
-            {
-                value = Array.Empty<long>();
-            }
-            size = new NBTNodeInt("size", value.Length).ToBytes();
-            byte[] result = new byte[pre.Length + size.Length + value.Length];
+            size = new NBTNodeInt("size", Value.Count).ToBytes();
+            byte[] result = new byte[pre.Length + size.Length + Value.Count * 8];
             pre.CopyTo(result, 0);
             size.CopyTo(result, pre.Length);
-            value.CopyTo(result, pre.Length + size.Length);
-            if (value.Length == 0)
+            for (int i = 0; i < Value.Count; i++)
             {
-                value = null;
+                BitConverter.GetBytes(Value[i]).CopyTo(result, pre.Length + size.Length + i * 8);
             }
             return result;
         }

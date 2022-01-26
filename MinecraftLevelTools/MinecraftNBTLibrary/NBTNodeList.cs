@@ -30,78 +30,34 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 namespace MinecraftNBTLibrary
 {
 
-    public class NBTNodeList : NBTNodeDataArray
+    public class NBTNodeList<T> : NBTNodeDataArray<NBTNodeData<T>>
     {
-        protected readonly List<NBTNodeData> children = new();
-
-        internal readonly NBTNodeType ChildrenType;
-
-        public override object Value
+        public NBTNodeList(string name, List<NBTNodeData<T>> data) : base(name, data)
         {
-            get => new List<NBTNodeData>(children);
-            set
-            {
-                if (value is IEnumerable<NBTNodeData> t)
-                {
-                    foreach (var item in t)
-                    {
-                        if (!NBT.TypeIsRight(ChildrenType, item))
-                            throw new WrongDataTypeException();
-                    }
-                    children.Clear();
-                    children.AddRange(t);
-                }
-                else
-                {
-                    throw new WrongDataTypeException();
-                }
-            }
         }
 
+        public NBTNodeList(string name) : this(name, new List<NBTNodeData<T>>()) { }
 
-        public override int Count => children.Count;
 
-        public override bool IsReadOnly => false;
-
-        public NBTNodeList(byte type) : this(type, String.Empty) { }
-
-        public NBTNodeList(byte type, string name) : this((NBTNodeType)type, name) { }
-
-        internal NBTNodeList(NBTNodeType type, string name)
-        {
-            ChildrenType = type;
-            Name = name;
-        }
-
-        public override NBTNodeData this[int index]
-        {
-            get => children[index];
-            set
-            {
-                if (value.Type != ChildrenType)
-                {
-                    throw new WrongDataTypeException();
-                }
-                children[index] = value;
-            }
-
-        }
-
-        public override sealed byte GetTypeIndex() => 9;
+        public override byte TypeIndex => 9;
 
         public override byte[] ToBytes()
         {
+            if(Value.Count == 0)
+            {
+                throw new EmptyListException();
+            }
             byte[] pre = PreBytes();
-            byte[] tagid = new NBTNodeByte("tagid", (byte)ChildrenType).ToBytes();
-            byte[] size = new NBTNodeInt("size", children.Count).ToBytes();
-            byte[][] load = new byte[children.Count][];
+            byte[] tagid = new NBTNodeByte("tagid", Value[0].TypeIndex).ToBytes();
+            byte[] size = new NBTNodeInt("size", Value.Count).ToBytes();
+            byte[][] load = new byte[Value.Count][];
             int length = 0;
             length += pre.Length;
             length += tagid.Length;
             length += size.Length;
-            for (int i = 0; i < children.Count; i++)
+            for (int i = 0; i < Value.Count; i++)
             {
-                load[i] = children[i].ToBytes();
+                load[i] = Value[i].GetBytesForList();
                 length += load[i].Length;
             }
             byte[] result = new byte[length];
@@ -109,7 +65,7 @@ namespace MinecraftNBTLibrary
             tagid.CopyTo(result, pre.Length);
             size.CopyTo(result, pre.Length + tagid.Length);
             int pos = pre.Length + tagid.Length + size.Length;
-            for (int i = 0; i < children.Count; i++)
+            for (int i = 0; i < Value.Count; i++)
             {
                 load[i].CopyTo(result, pos);
                 pos += load[i].Length;
@@ -117,55 +73,7 @@ namespace MinecraftNBTLibrary
             return result;
         }
 
-        public override int IndexOf(NBTNodeData item)
-        {
-
-            for (int i = 0; i < children.Count; i++)
-            {
-                if (ReferenceEquals(children[i], item))
-                    return i;
-            }
-
-        }
-
-        public override void Insert(int index, NBTNodeData item)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void RemoveAt(int index)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void Add(NBTNodeData item)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void Clear()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override bool Contains(NBTNodeData item)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void CopyTo(NBTNodeData[] array, int arrayIndex)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override IEnumerator<NBTNodeData> GetEnumerator()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override bool Remove(NBTNodeData item)
-        {
-            throw new NotImplementedException();
-        }
     }
+
+    public class EmptyListException : Exception { }
 }

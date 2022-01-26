@@ -6,49 +6,77 @@ using System.Threading.Tasks;
 
 namespace MinecraftNBTLibrary
 {
-    public class NBTNodeCompound : NBTNodeDataCollection
+    public class NBTNodeCompound : NBTNodeDataCollection<NBTNode>
     {
-        public override int Count => throw new NotImplementedException();
-
-        public override bool IsReadOnly => throw new NotImplementedException();
-
-        public override object Value { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
-        public override void Add(NBTNodeData item)
+        public NBTNodeCompound(string name) : base(name)
         {
-            throw new NotImplementedException();
         }
 
-        public override void Clear()
+        public NBTNodeCompound(string name, List<NBTNode> data) : base(name, data)
         {
-            throw new NotImplementedException();
         }
 
-        public override bool Contains(NBTNodeData item)
+        public override List<NBTNode> Value
         {
-            throw new NotImplementedException();
+            get => base.Value;
+            set
+            {
+                Value.Clear();
+                foreach (var item in value)
+                {
+                    Add(item);
+                }
+
+            }
         }
 
-        public override void CopyTo(NBTNodeData[] array, int arrayIndex)
+        public override void Add(NBTNode item)
         {
-            throw new NotImplementedException();
+            CheckIsData(item);
+            base.Add(item);
         }
 
-        public override IEnumerator<NBTNodeData> GetEnumerator()
+        private void CheckIsData(NBTNode item)
         {
-            throw new NotImplementedException();
+            bool flag = false;
+            Type t;
+            t = item.GetType();
+            while (t != typeof(object))
+            {
+                if (t.GetGenericTypeDefinition() == typeof(NBTNodeData<>))
+                {
+                    flag = true;
+                }
+                t = t.BaseType;
+            }
+            if (!flag)
+            {
+                Value.Clear();
+                throw new WrongDataTypeException();
+            }
+
         }
 
-        public override sealed byte GetTypeIndex() => 10;
-
-        public override bool Remove(NBTNodeData item)
-        {
-            throw new NotImplementedException();
-        }
+        public override byte TypeIndex => 10;
 
         public override byte[] ToBytes()
         {
-            throw new NotImplementedException();
+            int length = 0;
+            byte[][] load = new byte[Value.Count][];
+            for (int i = 0; i < Value.Count; i++)
+            {
+                load[i] = Value[i].ToBytes();
+                length += load[i].Length;
+            }
+            byte[] result = new byte[length + 1];
+            int pos = 0;
+            for (int i = 0; i < Value.Count; i++)
+            {
+                load[i].CopyTo(result, pos);
+                pos += load[i].Length;
+            }
+            result[result.Length - 1] = 0;//NBTNodeEnd
+            return result;
         }
     }
 }
