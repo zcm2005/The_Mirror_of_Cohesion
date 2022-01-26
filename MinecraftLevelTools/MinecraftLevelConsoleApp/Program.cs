@@ -2,7 +2,7 @@
 using MinecraftNBTLibrary;
 
 /*
-This file is part of MinecraftLevelTools.
+This file is part of The Mirror of Cohesion.
 
 This product is unofficial and not from Minecraft or approved by Minecraft.
 
