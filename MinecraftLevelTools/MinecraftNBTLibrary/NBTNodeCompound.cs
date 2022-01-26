@@ -61,6 +61,28 @@ namespace MinecraftNBTLibrary
 
         public override byte[] ToBytes()
         {
+            int loadlength = 0;
+            byte[] pre = GetPreBytes();
+            byte[][] load = new byte[Value.Count][];
+            for (int i = 0; i < Value.Count; i++)
+            {
+                load[i] = Value[i].ToBytes();
+                loadlength += load[i].Length;
+            }
+            byte[] result = new byte[pre.Length + loadlength + 1];
+            pre.CopyTo(result, 0);
+            int pos = pre.Length;
+            for (int i = 0; i < Value.Count; i++)
+            {
+                load[i].CopyTo(result, pos);
+                pos += load[i].Length;
+            }
+            result[result.Length - 1] = 0;//NBTNodeEnd
+            return result;
+        }
+
+        public override byte[] GetBytesForList()
+        {
             int length = 0;
             byte[][] load = new byte[Value.Count][];
             for (int i = 0; i < Value.Count; i++)

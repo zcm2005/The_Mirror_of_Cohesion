@@ -43,11 +43,11 @@ namespace MinecraftNBTLibrary
 
         public override byte[] ToBytes()
         {
-            if(Value.Count == 0)
+            if (Value.Count == 0)
             {
                 throw new EmptyListException();
             }
-            byte[] pre = PreBytes();
+            byte[] pre = GetPreBytes();
             byte[] tagid = new NBTNodeByte("tagid", Value[0].TypeIndex).ToBytes();
             byte[] size = new NBTNodeInt("size", Value.Count).ToBytes();
             byte[][] load = new byte[Value.Count][];
@@ -73,6 +73,32 @@ namespace MinecraftNBTLibrary
             return result;
         }
 
+        public override byte[] GetBytesForList()
+        {
+            if (Value.Count == 0)
+            {
+                throw new EmptyListException();
+            }
+            byte[] tagid = new NBTNodeByte("tagid", Value[0].TypeIndex).ToBytes();
+            byte[] size = new NBTNodeInt("size", Value.Count).ToBytes();
+            byte[][] load = new byte[Value.Count][];
+            int length = tagid.Length + size.Length;
+            for (int i = 0; i < Value.Count; i++)
+            {
+                load[i] = Value[i].GetBytesForList();
+                length += load[i].Length;
+            }
+            byte[] result = new byte[length];
+            tagid.CopyTo(result, 0);
+            size.CopyTo(result, tagid.Length);
+            int pos = tagid.Length + size.Length;
+            for (int i = 0; i < Value.Count; i++)
+            {
+                load[i].CopyTo(result, pos);
+                pos += load[i].Length;
+            }
+            return result;
+        }
     }
 
     public class EmptyListException : Exception { }
