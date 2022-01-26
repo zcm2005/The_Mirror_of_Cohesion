@@ -33,9 +33,54 @@ namespace MinecraftNBTLibrary
     /// </summary>
     public static class NBT
     {
-        public static void abc()
+        public static bool TypeIsRight(byte type,NBTNode node)=>TypeIsRight((NBTNodeType)type,node);
+        
+        internal static bool TypeIsRight(NBTNodeType type,NBTNode node)
         {
-            
+            bool flag = false;
+            switch (type)
+            {
+                case NBTNodeType.End:
+                    flag = node is NBTNodeEnd;
+                    break;
+                case NBTNodeType.Byte:
+                    flag = node is NBTNodeByte;
+                    break;
+                case NBTNodeType.Short:
+                    flag = node is NBTNodeShort;
+                    break;
+                case NBTNodeType.Int:
+                    flag = node is NBTNodeInt;
+                    break;
+                case NBTNodeType.Long:
+                    flag = node is NBTNodeLong;
+                    break;
+                case NBTNodeType.Flote:
+                    flag = node is NBTNodeFloat;
+                    break;
+                case NBTNodeType.Double:
+                    flag = node is NBTNodeDouble;
+                    break;
+                case NBTNodeType.Byte_Array:
+                    flag = node is NBTNodeByteArray;
+                    break;
+                case NBTNodeType.String:
+                    flag = node is NBTNodeString;
+                    break;
+                case NBTNodeType.List:
+                    flag = node is NBTNodeList;
+                    break;
+                case NBTNodeType.Compound:
+                    flag = node is NBTNodeCompound;
+                    break;
+                case NBTNodeType.Int_Array:
+                    flag = node is NBTNodeIntArray;
+                    break;
+                case NBTNodeType.Long_Array:
+                    flag = node is NBTNodeLongArray;
+                    break;
+            }
+            return flag;
         }
     }
 
