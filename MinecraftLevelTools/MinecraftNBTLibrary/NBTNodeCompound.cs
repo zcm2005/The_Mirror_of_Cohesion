@@ -57,7 +57,14 @@ namespace MinecraftNBTLibrary
             base.Add(item);
         }
 
+
         private void CheckIsData(NBTNode item)
+        {
+            if (item.Type == NBTNodeType.End)
+                throw new WrongDataTypeException();
+        }
+
+        /*private void CheckIsData(NBTNode item)
         {
             bool flag = false;
             Type t;
@@ -76,9 +83,9 @@ namespace MinecraftNBTLibrary
                 throw new WrongDataTypeException();
             }
 
-        }
+        }*/
 
-        public override byte TypeIndex => 10;
+        internal sealed override byte TypeIndex => 10;
 
         public override byte[] ToBytes()
         {

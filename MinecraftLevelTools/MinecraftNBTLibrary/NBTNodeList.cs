@@ -39,7 +39,7 @@ namespace MinecraftNBTLibrary
         public NBTNodeList(string name) : this(name, new List<NBTNodeData<T>>()) { }
 
 
-        public override byte TypeIndex => 9;
+        internal sealed override byte TypeIndex => 9;
 
         public override byte[] ToBytes()
         {

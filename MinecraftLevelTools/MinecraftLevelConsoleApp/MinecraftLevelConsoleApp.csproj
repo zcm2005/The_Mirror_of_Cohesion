@@ -9,7 +9,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MinecraftLevelToolCore\MinecraftLevelToolCore.csproj" />
-    <ProjectReference Include="..\MinecraftNBTLibrary\MinecraftNBTLibrary.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,5 +1,5 @@
 ﻿using MinecraftLevelToolCore;
-using MinecraftNBTLibrary;
+//using MinecraftNBTLibrary;
 
 /*
 This file is part of The Mirror of Cohesion.
@@ -26,5 +26,8 @@ Console.WriteLine("本程序不是 Minecraft 官方产品、不是来自 Minecra
 Console.WriteLine("本程序是与核心库配套发布的命令行工具，主要用于开发和调试，没有为本命令行工具制作说明文档的计划。");
 Console.WriteLine("在完成核心库后，可能会制作配套的图形界面工具。");
 
-Level l=new(Console.ReadLine());
-
+byte[] data = (BitConverter.GetBytes(100000).Reverse<byte>().ToArray<byte>());
+for (int i = 0; i < 4; i++)
+{
+    Console.WriteLine(data[i]);
+}
