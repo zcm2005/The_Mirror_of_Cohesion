@@ -68,16 +68,7 @@ namespace MinecraftNBTLibrary
                     flag = node is NBTNodeString;
                     break;
                 case NBTNodeType.List:
-                    Type t = node.GetType();
-                    while (t != typeof(object))
-                    {
-                        if (t.GetType().GetGenericTypeDefinition() == typeof(NBTNodeList<>))
-                        {
-                            flag = true;
-                            break;
-                        }
-                        t = t.BaseType;
-                    }
+                    flag = node is NBTNodeList;
                     break;
                 case NBTNodeType.Compound:
                     flag = node is NBTNodeCompound;
