@@ -105,6 +105,7 @@ namespace MinecraftNBTLibrary
                 {
                     case 0:
                         result = new NBTNodeEnd();
+                        length = 1;
                         break;
 
                     case 1:
@@ -215,152 +216,81 @@ namespace MinecraftNBTLibrary
                             byte tagid = ((NBTNodeByte)ParseFromBytes(origin, startindex + prelen, null, out int taglen)).Value;
                             int size = ((NBTNodeInt)ParseFromBytes(origin, startindex + prelen + taglen, null, out int sizelen)).Value;
                             int v = startindex + prelen + taglen + sizelen;
-                            switch (tagid)
+                            var t = new NBTNodeList(name);
+                            int pos = v;
+                            for (int i = 0; i < size; i++)
                             {
-                                case 0:
-                                    throw new WrongSyntaxException();
-                                case 1:
-                                    {
-                                        var t = new NBTNodeList<byte>(name);
-                                        for (int i = 0; i < size; i++)
-                                        {
-                                            t.Add(new NBTNodeByte(null, origin[v + i]));
-                                        }
-                                        result = t;
-                                        length = v + size;
-                                        break;
-                                    }
-                                case 2:
-                                    {
-                                        var t = new NBTNodeList<short>(name);
-                                        for (int i = 0; i < size; i++)
-                                        {
-                                            t.Add(new NBTNodeShort(null,
-                                               (short)(((int)origin[v + i * 2] << 8) | ((int)origin[v + i * 2 + 1]))
-                                                ));
-                                        }
-                                        result = t;
-                                        length = v + size * 2;
-                                        break;
-                                    }
-                                case 3:
-                                    {
-                                        var t = new NBTNodeList<int>(name);
-                                        for (int i = 0; i < size; i++)
-                                        {
-                                            t.Add(new NBTNodeInt(null,
-                                               (((int)origin[v + i * 4] << 24) | ((int)origin[v + i * 4 + 1] << 16) | ((int)origin[v + i * 4 + 2] << 8) | ((int)origin[v + i * 4 + 3]))
-                                                ));
-                                        }
-                                        result = t;
-                                        length = v + size * 4;
-                                        break;
-                                    }
-                                case 4:
-                                    {
-                                        var t = new NBTNodeList<long>(name);
-                                        for (int i = 0; i < size; i++)
-                                        {
-                                            t.Add(new NBTNodeLong(null,
-                                               (((long)origin[v + i * 8] << 56) | ((long)origin[v + i * 8 + 1] << 48) | ((long)origin[v + i * 8 + 2] << 40) | ((long)origin[v + i * 8 + 3] << 32)
-                                               | ((long)origin[v + i * 8 + 4] << 24) | ((long)origin[v + i * 8 + 5] << 16) | ((long)origin[v + i * 8 + 6] << 8) | ((long)origin[v + i * 8 + 7]))
-                                                ));
-                                        }
-                                        result = t;
-                                        length = v + size * 8;
-                                        break;
-                                    }
-                                case 5:
-                                    {
-                                        var t = new NBTNodeList<float>(name);
-                                        for (int i = 0; i < size; i++)
-                                        {
-                                            byte[] temp;
-                                            temp = new byte[4] { origin[v + i * 4 + 3], origin[v + i * 4 + 2], origin[v + i * 4 + 1], origin[v + i * 4] };
-                                            t.Add(new NBTNodeFloat(null, BitConverter.ToSingle(temp)));
-                                        }
-                                        result = t;
-                                        length = v + size * 4;
-                                        break;
-                                    }
-                                case 6:
-                                    {
-                                        var t = new NBTNodeList<double>(name);
-                                        for (int i = 0; i < size; i++)
-                                        {
-                                            byte[] temp;
-                                            temp = new byte[8] { origin[v + i * 4 + 7], origin[v + i * 4 + 6], origin[v + i * 4 + 5], origin[v + i * 4 + 4], origin[v + i * 4 + 3], origin[v + i * 4 + 2], origin[v + i * 4 + 1], origin[v + i * 4] };
-                                            t.Add(new NBTNodeDouble(null, BitConverter.ToDouble(temp)));
-                                        }
-                                        result = t;
-                                        length = v + size * 8;
-                                        break;
-                                    }
-                                case 7:
-                                    {
-                                        var t = new NBTNodeList<List<byte>>(name);
-                                        int pos = v;
-                                        for (int i = 0; i < size; i++)
-                                        {
-                                            //子ByteArray的size
-                                            int ls = ((NBTNodeInt)ParseFromBytes(origin, pos, null, out int lsl)).Value;
-                                            pos += lsl;
-                                            var tt = new NBTNodeByteArray(null);
-                                            for (int j = 0; j < ls; j++)
-                                            {
-                                                tt.Add(origin[pos]);
-                                                pos++;
-                                            }
-                                            t.Add(tt);
-                                        }
-                                        result = t;
-                                        length = pos - v;
-                                        break;
-                                    }
-                                case 8:
-                                    {
-                                        var t = new NBTNodeList<string>(name);
-                                        int pos = v;
-                                        for (int i = 0; i < size; i++)
-                                        {
-                                            //子string的length
-                                            int l = ((NBTNodeInt)ParseFromBytes(origin, pos, null, out int lsl)).Value;
-                                            pos += lsl;
-                                            var tt = new NBTNodeString(null, Encoding.UTF8.GetString(origin, pos, l));
-                                            pos += l;
-                                            t.Add(tt);
-                                        }
-                                        result = t;
-                                        length = pos - v;
-                                        break;
-                                    }
-                                case 9:
-                                    {
-                                        var t = new NBTNodeList<List<NBTNodeData<int>>>(name);
-                                        int pos = v;
-                                        for (int i = 0; i < size; i++)
-                                        {
-                                            //拷贝pos后的字符串，为一个新数组，使之符合NBTNodeList的格式
-                                            byte[] temp;
-                                            temp = new byte[3 + origin.Length - pos - 1];
-                                            temp[0] = 0; temp[1] = 0; temp[2] = 0;
-                                            for (i = pos; i < origin.Length; i++)
-                                            {
-                                                temp[3 + i - pos] = origin[i];
-                                            }
-                                            t.Add((NBTNodeList<int>)ParseFromBytes(temp))
-                                        }
-                                        result = t;
-                                        length = pos - v;
-                                        break;
-                                    }
-                                case 10:
-                                    {
-                                        var t = new NBTNodeList<List<NBTNode>>(name);
-                                        t.Add(new NBTNodeCompound("a"));
-                                    }
+                                byte[] temp = new byte[3 + origin.Length - pos - 1];
+                                temp[0] = tagid; temp[1] = 0; temp[2] = 0;
+                                for (i = pos; i < origin.Length; i++)
+                                {
+                                    temp[3 + i - pos] = origin[i];
+                                }
+                                t.Add(ParseFromBytes(temp, 0, null, out int a));
+                                pos += a - 3;
                             }
-
+                            length = pos - v;
+                            result = t;
+                            break;
+                        }
+                    case 10:
+                        {
+                            string name;
+                            name = GetNameFromPreBytes(origin, out int prelen);
+                            int v = startindex + prelen;
+                            var t = new NBTNodeCompound(name);
+                            int pos = v;
+                            while (origin[pos] != 0)
+                            {
+                                t.Add(ParseFromBytes(origin, pos, null, out int a));
+                                pos += a;
+                            }
+                            length = pos - v;
+                            result = t;
+                            break;
+                        }
+                    case 11:
+                        {
+                            string name;
+                            int size;
+                            NBTNodeInt sizeNode;
+                            name = GetNameFromPreBytes(origin, startindex, out int prelen);
+                            sizeNode = (NBTNodeInt)ParseFromBytes(origin, startindex + prelen, null, out int sizelen);
+                            size = sizeNode.Value;
+                            int[] load = new int[size];
+                            int v = startindex + prelen + sizelen;
+                            for (int i = 0; i < size; i++)
+                            {
+                                load[i] = (origin[v + i * 4] << 24) | (origin[v + i * 4 + 1] << 16) | (origin[v + i * 4 + 2] << 8) | (origin[v + i * 4 + 3]);
+                            }
+                            result = new NBTNodeIntArray(name, new List<int>(load));
+                            length = prelen + sizelen + size;
+                            break;
+                        }
+                    case 12:
+                        {
+                            string name;
+                            int size;
+                            NBTNodeInt sizeNode;
+                            name = GetNameFromPreBytes(origin, startindex, out int prelen);
+                            sizeNode = (NBTNodeInt)ParseFromBytes(origin, startindex + prelen, null, out int sizelen);
+                            size = sizeNode.Value;
+                            long[] load = new long[size];
+                            int v = startindex + prelen + sizelen;
+                            for (int i = 0; i < size; i++)
+                            {
+                                load[i] = ((long)origin[v + i * 8] << 56) |
+                                ((long)origin[v + i * 8 + 1] << 48) |
+                                ((long)origin[v + i * 8 + 2] << 40) |
+                                ((long)origin[v + i * 8 + 3] << 32) |
+                                ((long)origin[v + i * 8 + 4] << 24) |
+                                ((long)origin[v + i * 8 + 5] << 16) |
+                                ((long)origin[v + i * 8 + 6] << 8) |
+                                ((long)origin[v + i * 8 + 7]);
+                            }
+                            result = new NBTNodeLongArray(name, new List<long>(load));
+                            length = prelen + sizelen + size;
+                            break;
                         }
                     default:
                         throw new WrongSyntaxException();
