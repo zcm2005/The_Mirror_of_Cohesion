@@ -27,15 +27,42 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace MinecraftNBTLibrary
 {
-    public class NBTNodeCompound : NBTNodeDataCollection<NBTNode>
+    public abstract class NBTNodeCompoundBase : NBTNodeDataCollection<NBTNode>
     {
-        public NBTNodeCompound(string name) : base(name)
+        public NBTNodeCompoundBase(string name) : base(name)
         {
         }
 
-        public NBTNodeCompound(string name, List<NBTNode> data) : base(name, data)
+        public NBTNodeCompoundBase(string name, List<NBTNode> data) : base(name, data)
         {
         }
+
+        private static void CheckIsData(NBTNode item)
+        {
+            if (item.Type == NBTNodeType.End)
+                throw new WrongDataTypeException();
+        }
+
+        /*private void CheckIsData(NBTNode item)
+{
+    bool flag = false;
+    Type t;
+    t = item.GetType();
+    while (t != typeof(object))
+    {
+        if (t.GetGenericTypeDefinition() == typeof(NBTNodeData<>))
+        {
+            flag = true;
+        }
+        t = t.BaseType;
+    }
+    if (!flag)
+    {
+        Value.Clear();
+        throw new WrongDataTypeException();
+    }
+
+}*/
 
         public override List<NBTNode> Value
         {
@@ -51,39 +78,25 @@ namespace MinecraftNBTLibrary
             }
         }
 
+
         public override void Add(NBTNode item)
         {
             CheckIsData(item);
             base.Add(item);
         }
 
-
-        private void CheckIsData(NBTNode item)
+    }
+    public class NBTNodeCompound : NBTNodeCompoundBase
+    {
+        public NBTNodeCompound(string name) : base(name)
         {
-            if (item.Type == NBTNodeType.End)
-                throw new WrongDataTypeException();
         }
 
-        /*private void CheckIsData(NBTNode item)
+        public NBTNodeCompound(string name, List<NBTNode> data) : base(name, data)
         {
-            bool flag = false;
-            Type t;
-            t = item.GetType();
-            while (t != typeof(object))
-            {
-                if (t.GetGenericTypeDefinition() == typeof(NBTNodeData<>))
-                {
-                    flag = true;
-                }
-                t = t.BaseType;
-            }
-            if (!flag)
-            {
-                Value.Clear();
-                throw new WrongDataTypeException();
-            }
+        }
 
-        }*/
+
 
         internal sealed override byte TypeIndex => 10;
 

@@ -30,16 +30,56 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 namespace MinecraftNBTLibrary
 {
 
-    public class NBTNodeList<T> : NBTNodeDataArray<NBTNodeData<T>>
+    public class NBTNodeList : NBTNodeCompoundBase
     {
-        public NBTNodeList(string name, List<NBTNodeData<T>> data) : base(name, data)
+        public NBTNodeList(string name, List<NBTNode> data) : base(name, data)
         {
+            if (data.Count > 0)
+                for (int i = 1; i < data.Count; i++)
+                {
+                    if (data[i].TypeIndex != data[0].TypeIndex)
+                    {
+                        throw new WrongDataTypeException();
+                    }
+                }
         }
 
-        public NBTNodeList(string name) : this(name, new List<NBTNodeData<T>>()) { }
+        public NBTNodeList(string name) : this(name, new List<NBTNode>()) { }
 
 
         internal sealed override byte TypeIndex => 9;
+
+        public override void Add(NBTNode item)
+        {
+            if (Value.Count > 0)
+            {
+                if (item.TypeIndex != Value[0].TypeIndex)
+                {
+                    throw new WrongDataTypeException();
+                }
+            }
+            base.Add(item);
+        }
+
+        public override List<NBTNode> Value
+        {
+            get => base.Value;
+            set
+            {
+                if(Value.Count > 0)
+                {
+                    foreach(NBTNode item in Value)
+                    {
+                        if(item.TypeIndex != Value[0].TypeIndex)
+                        {
+                            throw new WrongDataTypeException();
+                        }
+                    }
+                }
+                base.Value = value;
+            }
+        }
+
 
         public override byte[] ToBytes()
         {
