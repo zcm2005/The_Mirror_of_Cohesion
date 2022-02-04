@@ -307,12 +307,13 @@ namespace MinecraftNBTLibrary
         public override byte[] ToBytes()
         {
             byte[] pre = GetPreBytes();
-            byte[] size;
-            size = new NBTNodeInt("size", Value.Count).ToBytes();
-            byte[] result = new byte[pre.Length + size.Length + Value.Count];
+            byte[] result = new byte[pre.Length + 4 + Value.Count];
             pre.CopyTo(result, 0);
-            size.CopyTo(result, pre.Length);
-            Value.CopyTo(result, pre.Length + size.Length);
+            result[pre.Length] = (byte)(Value.Count >> 24);
+            result[pre.Length] = (byte)(Value.Count >> 16);
+            result[pre.Length] = (byte)(Value.Count >> 8);
+            result[pre.Length] = (byte)(Value.Count);
+            Value.CopyTo(result, pre.Length + 4);
             return result;
         }
 
@@ -349,14 +350,13 @@ namespace MinecraftNBTLibrary
         public override byte[] ToBytes()
         {
             byte[] pre = GetPreBytes();
-            byte[] length;
             byte[] content;
             content = Encoding.UTF8.GetBytes(Value);
-            length = new NBTNodeShort("length", (short)content.Length).ToBytes();
-            byte[] result = new byte[pre.Length + length.Length + content.Length];
+            byte[] result = new byte[pre.Length + 2 + content.Length];
             pre.CopyTo(result, 0);
-            length.CopyTo(result, pre.Length);
-            content.CopyTo(result, pre.Length + length.Length);
+            result[pre.Length + 1] = (byte)content.Length;
+            result[pre.Length] = (byte)(content.Length >> 8);
+            content.CopyTo(result, pre.Length + 2);
             return result;
         }
     }
@@ -387,14 +387,15 @@ namespace MinecraftNBTLibrary
         public override byte[] ToBytes()
         {
             byte[] pre = GetPreBytes();
-            byte[] size;
-            size = new NBTNodeInt("size", Value.Count).ToBytes();
-            byte[] result = new byte[pre.Length + size.Length + Value.Count * 4];
+            byte[] result = new byte[pre.Length + 4 + Value.Count * 4];
             pre.CopyTo(result, 0);
-            size.CopyTo(result, pre.Length);
+            result[pre.Length] = (byte)(Value.Count >> 24);
+            result[pre.Length] = (byte)(Value.Count >> 16);
+            result[pre.Length] = (byte)(Value.Count >> 8);
+            result[pre.Length] = (byte)(Value.Count);
             for (int i = 0; i < Value.Count; i++)
             {
-                BitConverter.GetBytes(Value[i]).CopyTo(result, pre.Length + size.Length + i * 4);
+                BitConverter.GetBytes(Value[i]).CopyTo(result, pre.Length + 4 + i * 4);
             }
             return result;
         }
@@ -425,14 +426,15 @@ namespace MinecraftNBTLibrary
         public override byte[] ToBytes()
         {
             byte[] pre = GetPreBytes();
-            byte[] size;
-            size = new NBTNodeInt("size", Value.Count).ToBytes();
-            byte[] result = new byte[pre.Length + size.Length + Value.Count * 8];
+            byte[] result = new byte[pre.Length + 4 + Value.Count * 8];
             pre.CopyTo(result, 0);
-            size.CopyTo(result, pre.Length);
+            result[pre.Length] = (byte)(Value.Count >> 24);
+            result[pre.Length] = (byte)(Value.Count >> 16);
+            result[pre.Length] = (byte)(Value.Count >> 8);
+            result[pre.Length] = (byte)(Value.Count);
             for (int i = 0; i < Value.Count; i++)
             {
-                BitConverter.GetBytes(Value[i]).CopyTo(result, pre.Length + size.Length + i * 8);
+                BitConverter.GetBytes(Value[i]).CopyTo(result, pre.Length + 4 + i * 8);
             }
             return result;
         }

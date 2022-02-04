@@ -66,11 +66,11 @@ namespace MinecraftNBTLibrary
             get => base.Value;
             set
             {
-                if(Value.Count > 0)
+                if (Value != null && Value.Count > 0)
                 {
-                    foreach(NBTNode item in Value)
+                    foreach (NBTNode item in Value)
                     {
-                        if(item.TypeIndex != Value[0].TypeIndex)
+                        if (item.TypeIndex != Value[0].TypeIndex)
                         {
                             throw new WrongDataTypeException();
                         }
@@ -88,13 +88,10 @@ namespace MinecraftNBTLibrary
                 throw new EmptyListException();
             }
             byte[] pre = GetPreBytes();
-            byte[] tagid = new NBTNodeByte("tagid", Value[0].TypeIndex).ToBytes();
-            byte[] size = new NBTNodeInt("size", Value.Count).ToBytes();
             byte[][] load = new byte[Value.Count][];
             int length = 0;
             length += pre.Length;
-            length += tagid.Length;
-            length += size.Length;
+            length += 5;
             for (int i = 0; i < Value.Count; i++)
             {
                 load[i] = Value[i].GetBytesForList();
@@ -102,9 +99,12 @@ namespace MinecraftNBTLibrary
             }
             byte[] result = new byte[length];
             pre.CopyTo(result, 0);
-            tagid.CopyTo(result, pre.Length);
-            size.CopyTo(result, pre.Length + tagid.Length);
-            int pos = pre.Length + tagid.Length + size.Length;
+            result[pre.Length] = Value[0].TypeIndex;
+            result[pre.Length + 1] = (byte)(Value.Count >> 24);
+            result[pre.Length + 2] = (byte)(Value.Count >> 16);
+            result[pre.Length + 3] = (byte)(Value.Count >> 8);
+            result[pre.Length + 4] = (byte)Value.Count;
+            int pos = pre.Length + 5;
             for (int i = 0; i < Value.Count; i++)
             {
                 load[i].CopyTo(result, pos);

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -163,7 +164,7 @@ namespace MinecraftNBTLibrary
                         {
                             string name;
                             name = GetNameFromPreBytes(origin, startindex, out int prelen);
-                            byte[] reverse = new byte[4];
+                            byte[] reverse = new byte[8];
                             for (int i = 0; i < 8; i++)
                             {
                                 reverse[i] = origin[startindex + prelen + 7 - i];
@@ -176,42 +177,43 @@ namespace MinecraftNBTLibrary
                         {
                             string name;
                             int size;
-                            NBTNodeInt sizeNode;
                             name = GetNameFromPreBytes(origin, startindex, out int prelen);
-                            sizeNode = (NBTNodeInt)ParseFromBytes(origin, startindex + prelen, null, out int sizelen);
-                            size = sizeNode.Value;
+                            size = (origin[startindex + prelen] << 24) | (origin[startindex + prelen + 1] << 16) | (origin[startindex + prelen + 2] << 8) | (origin[startindex + prelen + 3]);
                             byte[] load = new byte[size];
                             for (int i = 0; i < size; i++)
                             {
-                                load[i] = origin[startindex + prelen + sizelen + i];
+                                load[i] = origin[startindex + prelen + 4 + i];
                             }
                             result = new NBTNodeByteArray(name, new List<byte>(load));
-                            length = prelen + sizelen + size;
+                            length = prelen + 4 + size;
                             break;
                         }
                     case 8:
                         {
                             string name, load;
-                            name = GetNameFromPreBytes(origin, out int prelen);
+                            name = GetNameFromPreBytes(origin, startindex, out int prelen);
                             ushort len;
-                            len = (ushort)((NBTNodeShort)ParseFromBytes(origin, startindex + prelen, null, out int lenlen)).Value;//len是字符串的长度，lenlen是记录len的NBTNodeShort的长度
-                            load = Encoding.UTF8.GetString(origin, startindex + prelen + lenlen, len);
+                            len = (ushort)(origin[startindex + prelen] << 8 | origin[startindex + prelen + 1]);
+                            load = Encoding.UTF8.GetString(origin, startindex + prelen + 2, len);
                             result = new NBTNodeString(name, load);
-                            length = prelen + lenlen + len;
+                            length = prelen + 2 + len;
                             break;
                         }
                     case 9:
                         {
                             string name;
-                            name = GetNameFromPreBytes(origin, out int prelen);
-                            byte tagid = ((NBTNodeByte)ParseFromBytes(origin, startindex + prelen, null, out int taglen)).Value;
-                            int size = ((NBTNodeInt)ParseFromBytes(origin, startindex + prelen + taglen, null, out int sizelen)).Value;
-                            int v = startindex + prelen + taglen + sizelen;
+                            name = GetNameFromPreBytes(origin, startindex, out int prelen);
+                            byte tagid = origin[startindex + prelen];
+                            int size = (origin[startindex + prelen + 1] << 24) |
+                                (origin[startindex + prelen + 2] << 16) |
+                                (origin[startindex + prelen + 3] << 8) |
+                                (origin[startindex + prelen + 4]);
+                            int v = startindex + prelen + 1 + 4;
                             var t = new NBTNodeList(name);
                             int pos = v;
                             for (int i = 0; i < size; i++)
                             {
-                                byte[] temp = new byte[3 + origin.Length - pos - 1];
+                                byte[] temp = new byte[3 + origin.Length - pos];
                                 temp[0] = tagid; temp[1] = 0; temp[2] = 0;
                                 for (i = pos; i < origin.Length; i++)
                                 {
@@ -220,14 +222,14 @@ namespace MinecraftNBTLibrary
                                 t.Add(ParseFromBytes(temp, 0, null, out int a));
                                 pos += a - 3;
                             }
-                            length = pos - v;
+                            length = pos - startindex;
                             result = t;
                             break;
                         }
                     case 10:
                         {
                             string name;
-                            name = GetNameFromPreBytes(origin, out int prelen);
+                            name = GetNameFromPreBytes(origin, startindex, out int prelen);
                             int v = startindex + prelen;
                             var t = new NBTNodeCompound(name);
                             int pos = v;
@@ -236,7 +238,7 @@ namespace MinecraftNBTLibrary
                                 t.Add(ParseFromBytes(origin, pos, null, out int a));
                                 pos += a;
                             }
-                            length = pos - v;
+                            length = pos - startindex;
                             result = t;
                             break;
                         }
@@ -244,30 +246,25 @@ namespace MinecraftNBTLibrary
                         {
                             string name;
                             int size;
-                            NBTNodeInt sizeNode;
                             name = GetNameFromPreBytes(origin, startindex, out int prelen);
-                            sizeNode = (NBTNodeInt)ParseFromBytes(origin, startindex + prelen, null, out int sizelen);
-                            size = sizeNode.Value;
+                            size = (origin[startindex + prelen] << 24) | (origin[startindex + prelen + 1] << 16) | (origin[startindex + prelen + 2] << 8) | (origin[startindex + prelen + 3]);
                             int[] load = new int[size];
-                            int v = startindex + prelen + sizelen;
+                            int v = startindex + prelen + 4;
                             for (int i = 0; i < size; i++)
                             {
                                 load[i] = (origin[v + i * 4] << 24) | (origin[v + i * 4 + 1] << 16) | (origin[v + i * 4 + 2] << 8) | (origin[v + i * 4 + 3]);
                             }
                             result = new NBTNodeIntArray(name, new List<int>(load));
-                            length = prelen + sizelen + size;
+                            length = prelen + 4 + size;
                             break;
                         }
                     case 12:
                         {
                             string name;
-                            int size;
-                            NBTNodeInt sizeNode;
                             name = GetNameFromPreBytes(origin, startindex, out int prelen);
-                            sizeNode = (NBTNodeInt)ParseFromBytes(origin, startindex + prelen, null, out int sizelen);
-                            size = sizeNode.Value;
+                            int size = (origin[startindex + prelen] << 24) | (origin[startindex + prelen + 1] << 16) | (origin[startindex + prelen + 2] << 8) | (origin[startindex + prelen + 3]);
                             long[] load = new long[size];
-                            int v = startindex + prelen + sizelen;
+                            int v = startindex + prelen + 4;
                             for (int i = 0; i < size; i++)
                             {
                                 load[i] = ((long)origin[v + i * 8] << 56) |
@@ -280,7 +277,7 @@ namespace MinecraftNBTLibrary
                                 ((long)origin[v + i * 8 + 7]);
                             }
                             result = new NBTNodeLongArray(name, new List<long>(load));
-                            length = prelen + sizelen + size;
+                            length = prelen + 4 + size;
                             break;
                         }
                     default:

@@ -69,12 +69,17 @@ namespace MinecraftNBTLibrary
             get => base.Value;
             set
             {
-                Value.Clear();
+                if(value == null)
+                {
+                    throw new WrongDataTypeException();
+                }
+                if (Value != null)
+                    Value.Clear();
                 foreach (var item in value)
                 {
                     Add(item);
                 }
-
+                base.Value = value;
             }
         }
 

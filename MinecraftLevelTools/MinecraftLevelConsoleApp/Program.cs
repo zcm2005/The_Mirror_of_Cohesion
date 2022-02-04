@@ -27,8 +27,15 @@ Console.WriteLine("本程序不是 Minecraft 官方产品、不是来自 Minecra
 Console.WriteLine("本程序是与核心库配套发布的命令行工具，主要用于开发和调试，没有为本命令行工具制作说明文档的计划。");
 Console.WriteLine("在完成核心库后，可能会制作配套的图形界面工具。");
 
-byte[] data = (BitConverter.GetBytes(100000).Reverse<byte>().ToArray<byte>());
-for (int i = 0; i < 4; i++)
-{
-    Console.WriteLine(data[i]);
-}
+string path=Console.ReadLine();
+var a=File.OpenRead(path);
+var b = new byte[a.Length];
+a.Read(b);
+var c=NBT.ParseFromBytes(b);
+var d=File.Create(".\\out.nbt");
+var e=c.ToBytes();
+d.Write(e, 0, e.Length);
+d.Close();
+d.Dispose();
+Console.WriteLine("完毕");
+Console.ReadKey();
