@@ -1,5 +1,6 @@
 ﻿using MinecraftLevelToolCore;
-//using MinecraftNBTLibrary;
+
+using MinecraftNBTLibrary;
 
 /*
 This file is part of The Mirror of Cohesion.
