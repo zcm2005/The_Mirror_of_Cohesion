@@ -85,32 +85,46 @@ namespace MinecraftNBTLibrary
         {
             if (Value.Count == 0)
             {
-                throw new EmptyListException();
+                byte[] pre = GetPreBytes();
+                int length = 0;
+                length += pre.Length;
+                length += 5;
+                byte[] result = new byte[length];
+                pre.CopyTo(result, 0);
+                result[pre.Length] = 0;
+                result[pre.Length + 1] = (byte)(Value.Count >> 24);
+                result[pre.Length + 2] = (byte)(Value.Count >> 16);
+                result[pre.Length + 3] = (byte)(Value.Count >> 8);
+                result[pre.Length + 4] = (byte)Value.Count;
+                return result;
             }
-            byte[] pre = GetPreBytes();
-            byte[][] load = new byte[Value.Count][];
-            int length = 0;
-            length += pre.Length;
-            length += 5;
-            for (int i = 0; i < Value.Count; i++)
+            else
             {
-                load[i] = Value[i].GetBytesForList();
-                length += load[i].Length;
+                byte[] pre = GetPreBytes();
+                byte[][] load = new byte[Value.Count][];
+                int length = 0;
+                length += pre.Length;
+                length += 5;
+                for (int i = 0; i < Value.Count; i++)
+                {
+                    load[i] = Value[i].GetBytesForList();
+                    length += load[i].Length;
+                }
+                byte[] result = new byte[length];
+                pre.CopyTo(result, 0);
+                result[pre.Length] = Value[0].TypeIndex;
+                result[pre.Length + 1] = (byte)(Value.Count >> 24);
+                result[pre.Length + 2] = (byte)(Value.Count >> 16);
+                result[pre.Length + 3] = (byte)(Value.Count >> 8);
+                result[pre.Length + 4] = (byte)Value.Count;
+                int pos = pre.Length + 5;
+                for (int i = 0; i < Value.Count; i++)
+                {
+                    load[i].CopyTo(result, pos);
+                    pos += load[i].Length;
+                }
+                return result;
             }
-            byte[] result = new byte[length];
-            pre.CopyTo(result, 0);
-            result[pre.Length] = Value[0].TypeIndex;
-            result[pre.Length + 1] = (byte)(Value.Count >> 24);
-            result[pre.Length + 2] = (byte)(Value.Count >> 16);
-            result[pre.Length + 3] = (byte)(Value.Count >> 8);
-            result[pre.Length + 4] = (byte)Value.Count;
-            int pos = pre.Length + 5;
-            for (int i = 0; i < Value.Count; i++)
-            {
-                load[i].CopyTo(result, pos);
-                pos += load[i].Length;
-            }
-            return result;
         }
 
         public override byte[] GetBytesForList()
@@ -119,19 +133,22 @@ namespace MinecraftNBTLibrary
             {
                 throw new EmptyListException();
             }
-            byte[] tagid = new NBTNodeByte("tagid", Value[0].TypeIndex).ToBytes();
-            byte[] size = new NBTNodeInt("size", Value.Count).ToBytes();
+            byte[] pre = GetPreBytes();
             byte[][] load = new byte[Value.Count][];
-            int length = tagid.Length + size.Length;
+            int length = 0;
+            length += 5;
             for (int i = 0; i < Value.Count; i++)
             {
                 load[i] = Value[i].GetBytesForList();
                 length += load[i].Length;
             }
             byte[] result = new byte[length];
-            tagid.CopyTo(result, 0);
-            size.CopyTo(result, tagid.Length);
-            int pos = tagid.Length + size.Length;
+            result[0] = Value[0].TypeIndex;
+            result[1] = (byte)(Value.Count >> 24);
+            result[2] = (byte)(Value.Count >> 16);
+            result[ 3] = (byte)(Value.Count >> 8);
+            result[ 4] = (byte)Value.Count;
+            int pos = pre.Length + 5;
             for (int i = 0; i < Value.Count; i++)
             {
                 load[i].CopyTo(result, pos);

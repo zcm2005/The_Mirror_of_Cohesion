@@ -208,16 +208,15 @@ namespace MinecraftNBTLibrary
                                 (origin[startindex + prelen + 2] << 16) |
                                 (origin[startindex + prelen + 3] << 8) |
                                 (origin[startindex + prelen + 4]);
-                            int v = startindex + prelen + 1 + 4;
                             var t = new NBTNodeList(name);
-                            int pos = v;
+                            int pos = startindex + prelen + 1 + 4;
                             for (int i = 0; i < size; i++)
                             {
                                 byte[] temp = new byte[3 + origin.Length - pos];
                                 temp[0] = tagid; temp[1] = 0; temp[2] = 0;
-                                for (i = pos; i < origin.Length; i++)
+                                for (int j = pos; j < origin.Length; j++)
                                 {
-                                    temp[3 + i - pos] = origin[i];
+                                    temp[3 + j - pos] = origin[j];
                                 }
                                 t.Add(ParseFromBytes(temp, 0, null, out int a));
                                 pos += a - 3;
@@ -238,7 +237,7 @@ namespace MinecraftNBTLibrary
                                 t.Add(ParseFromBytes(origin, pos, null, out int a));
                                 pos += a;
                             }
-                            length = pos - startindex;
+                            length = pos - startindex + 1;
                             result = t;
                             break;
                         }
@@ -255,7 +254,7 @@ namespace MinecraftNBTLibrary
                                 load[i] = (origin[v + i * 4] << 24) | (origin[v + i * 4 + 1] << 16) | (origin[v + i * 4 + 2] << 8) | (origin[v + i * 4 + 3]);
                             }
                             result = new NBTNodeIntArray(name, new List<int>(load));
-                            length = prelen + 4 + size;
+                            length = prelen + 4 + size * 4;
                             break;
                         }
                     case 12:
@@ -277,7 +276,7 @@ namespace MinecraftNBTLibrary
                                 ((long)origin[v + i * 8 + 7]);
                             }
                             result = new NBTNodeLongArray(name, new List<long>(load));
-                            length = prelen + 4 + size;
+                            length = prelen + 4 + size * 8;
                             break;
                         }
                     default:
