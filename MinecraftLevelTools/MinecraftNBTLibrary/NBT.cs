@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text;
+using System.IO.Compression;
 
 /*
 This file is part of The Mirror of Cohesion.
@@ -325,8 +321,6 @@ namespace MinecraftNBTLibrary
         }
 
 
-        private static string GetNameFromPreBytes(byte[] origin, out int length) => GetNameFromPreBytes(origin, 0, out length);
-
         /// <summary>
         /// 从byte数组的特定位置按前缀读取
         /// </summary>
@@ -344,9 +338,48 @@ namespace MinecraftNBTLibrary
             return Encoding.UTF8.GetString(origin, pos + 3, len);
         }
 
+        /// <summary>
+        /// 从流解析出NBTNode
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
+        public static NBTNode ParseFromStream(Stream s)
+        {
+            List<byte> temp = new();
+            int t;
+            t = s.ReadByte();
+            while (t != -1)
+            {
+                temp.Add((byte)t);
+                t = s.ReadByte();
+            }
+            return ParseFromBytes(temp.ToArray());
+        }
 
+        /// <summary>
+        /// 从GZip压缩文件解析出NBTNode。一般来说，Minecraft中的.dat文件都是GZip压缩文件。
+        /// </summary>
+        /// <param name="path">文件路径</param>
+        /// <returns></returns>
+        public static NBTNode ParseFromCompressedNBTFile(string path)
+        {
+            var t = File.OpenRead(path);
+            var g = new GZipStream(t, CompressionMode.Decompress);
+            t.Close();
+            return ParseFromStream(g);
+        }
 
-
+        /// <summary>
+        /// 写为GZip压缩的文件
+        /// </summary>
+        /// <param name=""></param>
+        public static void WriteToCompressedNBTFile(NBTNode t, string path)
+        {
+            var f = File.Open(path, FileMode.Create, FileAccess.Write, FileShare.None);
+            byte[] data = t.ToBytes();
+            f.Write(data, 0, data.Length);
+            f.Close();
+        }
     }
 
     /// <summary>
