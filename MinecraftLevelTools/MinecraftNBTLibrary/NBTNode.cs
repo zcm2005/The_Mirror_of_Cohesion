@@ -36,16 +36,33 @@ namespace MinecraftNBTLibrary
     public abstract class NBTNode
     {
 
+        /// <summary>
+        /// 数值形式的标签类型
+        /// </summary>
         internal abstract byte TypeIndex { get; }
 
+        /// <summary>
+        /// 将此节点输出为byte[]格式
+        /// </summary>
+        /// <returns></returns>
         public abstract byte[] ToBytes();
 
+        /// <summary>
+        /// 枚举形式的标签类型，与数值形式对应
+        /// </summary>
         public NBTNodeType Type { private init; get; }
 
         protected NBTNode() { Type = (NBTNodeType)TypeIndex; }
 
+        /// <summary>
+        /// 表示此节点的父节点
+        /// </summary>
         public NBTNode? Parent;
-
+        
+        /// <summary>
+        /// 输出不含前缀的byte[]类型节点，用于存储在list节点中
+        /// </summary>
+        /// <returns></returns>
         public abstract byte[] GetBytesForList();
 
 
@@ -275,45 +292,18 @@ namespace MinecraftNBTLibrary
         }
     }
 
-    /// <summary>
-    /// 表示存储某种集合数据的NBT节点
-    /// </summary>
-    /// <typeparam name="T">集合中每一项的类型</typeparam>
-    public abstract class NBTNodeDataCollection<T> : NBTNodeData<List<T>>, ICollection<T>
-    {
-        protected NBTNodeDataCollection(string name, List<T> data) : base(name, data)
-        {
-        }
 
-        protected NBTNodeDataCollection(string name) : this(name, new List<T>()) { }
-
-
-        public static bool operator ==(NBTNodeDataCollection<T> a, NBTNodeDataCollection<T> b) => Enumerable.SequenceEqual(a.Value, b.Value);
-
-        public static bool operator !=(NBTNodeDataCollection<T> a, NBTNodeDataCollection<T> b) => !(a == b);
-
-
-        public int Count => Value.Count;
-
-        public bool IsReadOnly => false;
-
-        public virtual void Add(T item) => Value.Add(item);
-        public void Clear() => Value.Clear();
-        public bool Contains(T item) => Value.Contains(item);
-        public void CopyTo(T[] array, int arrayIndex) => Value.CopyTo(array, arrayIndex);
-        public IEnumerator<T> GetEnumerator() => Value.GetEnumerator();
-        public bool Remove(T item) => Value.Remove(item);
-
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-    }
 
     /// <summary>
     /// 存有某数组类型数据的节点
     /// </summary>
     /// <typeparam name="T">数组中数据的类型</typeparam>
-    public abstract class NBTNodeDataArray<T> : NBTNodeDataCollection<T>, IList<T>
+    public abstract class NBTNodeDataArray<T> : NBTNodeData<List<T>>, IList<T>
     {
         protected NBTNodeDataArray(string name, List<T> data) : base(name, data)
+        {
+        }
+        protected NBTNodeDataArray(string name) : base(name, new List<T>())
         {
         }
 
@@ -326,7 +316,30 @@ namespace MinecraftNBTLibrary
         public int IndexOf(T item) => Value.IndexOf(item);
         public void Insert(int index, T item) => Value.Insert(index, item);
         public void RemoveAt(int index) => Value.RemoveAt(index);
+        public int Count => Value.Count;
 
+        public bool IsReadOnly => false;
+
+        public virtual void Add(T item) => Value.Add(item);
+        public void Clear() => Value.Clear();
+
+        /// <summary>
+        /// 不建议使用
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        public bool Contains(T item) => Value.Contains(item);
+        public void CopyTo(T[] array, int arrayIndex) => Value.CopyTo(array, arrayIndex);
+        public IEnumerator<T> GetEnumerator() => Value.GetEnumerator();
+
+        /// <summary>
+        /// 不建议使用
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        public bool Remove(T item) => Value.Remove(item);
+
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 
     /// <summary>

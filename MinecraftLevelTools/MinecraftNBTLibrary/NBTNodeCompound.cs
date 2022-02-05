@@ -32,7 +32,7 @@ namespace MinecraftNBTLibrary
     /// <summary>
     /// 储存其他NBT节点的NBT节点
     /// </summary>
-    public abstract class NBTNodeCompoundBase : NBTNodeDataCollection<NBTNode>
+    public abstract class NBTNodeCompoundBase : NBTNodeDataArray<NBTNode>
     {
         public NBTNodeCompoundBase(string name) : base(name)
         {
