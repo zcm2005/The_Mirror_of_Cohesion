@@ -5,7 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>0.1.0-alpha</Version>
+    <Version>0.1.1</Version>
     <Authors>ZCM</Authors>
     <Product>The Mirror of Cohesion</Product>
     <Copyright>AGPL-3.0-only</Copyright>
@@ -17,6 +17,8 @@
     <PackageLicenseExpression>AGPL-3.0-only</PackageLicenseExpression>
     <AssemblyName>MoCNBT</AssemblyName>
     <NoWin32Manifest>true</NoWin32Manifest>
+    <Description>A cross-platform and open source NBT library for Minecraft.
+It's part of The Mirror of Cohesion - A Minecraft Level Editor.</Description>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
