@@ -5,20 +5,25 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>0.1.1</Version>
+    <Version>0.2.0</Version>
     <Authors>ZCM</Authors>
     <Product>The Mirror of Cohesion</Product>
     <Copyright>AGPL-3.0-only</Copyright>
-    <PackageProjectUrl>https://gitee.com/zcm2005/MinecraftLevelTools</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/zcm2005/The_Mirror_of_Cohesion</PackageProjectUrl>
     <RepositoryType>git</RepositoryType>
-    <RepositoryUrl>https://gitee.com/zcm2005/MinecraftLevelTools.git</RepositoryUrl>
+    <RepositoryUrl>git@github.com:zcm2005/The_Mirror_of_Cohesion.git</RepositoryUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
     <PackageLicenseExpression>AGPL-3.0-only</PackageLicenseExpression>
     <AssemblyName>MoCNBT</AssemblyName>
     <NoWin32Manifest>true</NoWin32Manifest>
     <Description>A cross-platform and open source NBT library for Minecraft.
-It's part of The Mirror of Cohesion - A Minecraft Level Editor.</Description>
+It's part of The Mirror of Cohesion - A Minecraft Level Editor.
+一个跨平台、开源的我的世界NBT库。
+本库是凝虚之镜的组成部分，但也可单独使用。</Description>
+    <DebugType>embedded</DebugType>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <SignAssembly>False</SignAssembly>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
