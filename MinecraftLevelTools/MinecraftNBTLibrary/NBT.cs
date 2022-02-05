@@ -34,8 +34,20 @@ namespace MinecraftNBTLibrary
     /// </summary>
     public static class NBT
     {
-        public static bool TypeIsRight(byte type, NBTNode node) => TypeIsRight((NBTNodeType)type, node);
+        /// <summary>
+        /// 检验某NBTNode是否为给定的类型
+        /// </summary>
+        /// <param name="tagid">以数值形式表示的类型</param>
+        /// <param name="node">给定一个NBTNode</param>
+        /// <returns></returns>
+        public static bool TypeIsRight(byte tagid, NBTNode node) => TypeIsRight((NBTNodeType)tagid, node);
 
+        /// <summary>
+        /// 检验某NBTNode是否为给定的类型
+        /// </summary>
+        /// <param name="type">以枚举形式表示的类型</param>
+        /// <param name="node">给定一个NBTNode</param>
+        /// <returns></returns>
         public static bool TypeIsRight(NBTNodeType type, NBTNode node)
         {
             bool flag = false;
@@ -84,10 +96,30 @@ namespace MinecraftNBTLibrary
             return flag;
         }
 
+        /// <summary>
+        /// 从byte[]形式的NBT中解析出NBTNode
+        /// </summary>
+        /// <param name="origin"></param>
+        /// <returns></returns>
         public static NBTNode ParseFromBytes(byte[] origin) => ParseFromBytes(origin, 0);
 
+        /// <summary>
+        /// 从byte[]形式的NBT中解析出NBTNode
+        /// </summary>
+        /// <param name="origin"></param>
+        /// <param name="pos">起始的位置</param>
+        /// <returns></returns>
         public static NBTNode ParseFromBytes(byte[] origin, int pos) => ParseFromBytes(origin, pos, null, out int len);
 
+        /// <summary>
+        /// 从byte[]形式的NBT中解析出NBTNode
+        /// </summary>
+        /// <param name="origin">从此解析</param>
+        /// <param name="startindex">起始的位置</param>
+        /// <param name="parent">初始的父级节点，可空</param>
+        /// <param name="length">返回解析得到的节点的长度</param>
+        /// <returns>此为该节点</returns>
+        /// <exception cref="WrongSyntaxException">当提供的origin内容格式错误、无法正确解析时，引发此异常</exception>
         public static NBTNode ParseFromBytes(byte[] origin, int startindex, NBTNode? parent, out int length)
         {
             NBTNode result;

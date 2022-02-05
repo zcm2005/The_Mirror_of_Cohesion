@@ -30,6 +30,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 namespace MinecraftNBTLibrary
 {
 
+    /// <summary>
+    /// 存有同类型NBT节点的Compound
+    /// </summary>
     public class NBTNodeList : NBTNodeCompoundBase
     {
         public NBTNodeList(string name, List<NBTNode> data) : base(name, data)

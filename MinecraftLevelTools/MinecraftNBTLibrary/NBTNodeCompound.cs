@@ -27,6 +27,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace MinecraftNBTLibrary
 {
+
+
+    /// <summary>
+    /// 储存其他NBT节点的NBT节点
+    /// </summary>
     public abstract class NBTNodeCompoundBase : NBTNodeDataCollection<NBTNode>
     {
         public NBTNodeCompoundBase(string name) : base(name)

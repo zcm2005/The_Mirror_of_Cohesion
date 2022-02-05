@@ -30,6 +30,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 namespace MinecraftNBTLibrary
 {
 
+    /// <summary>
+    /// 此为抽象的NBTNode类，是所有NBT节点的父级
+    /// </summary>
     public abstract class NBTNode
     {
 
@@ -48,6 +51,9 @@ namespace MinecraftNBTLibrary
 
     }
 
+    /// <summary>
+    /// End节点，仅一字节，为0x00
+    /// </summary>
     public class NBTNodeEnd : NBTNode
     {
         public NBTNodeEnd() : base()
@@ -71,6 +77,10 @@ namespace MinecraftNBTLibrary
 
     }
 
+    /// <summary>
+    /// 表示存有数据的节点，不应也不能再继承此类
+    /// </summary>
+    /// <typeparam name="T">数据的类型，仅能填为支持的几种之一</typeparam>
     public abstract class NBTNodeData<T> : NBTNode
     {
 
@@ -103,7 +113,9 @@ namespace MinecraftNBTLibrary
 
     }
 
-
+    /// <summary>
+    /// Byte类型的节点
+    /// </summary>
     public class NBTNodeByte : NBTNodeData<byte>
     {
         internal override sealed byte TypeIndex => 1;
@@ -126,6 +138,9 @@ namespace MinecraftNBTLibrary
         }
     }
 
+    /// <summary>
+    /// Short类型的节点
+    /// </summary>
     public class NBTNodeShort : NBTNodeData<short>
     {
         internal override sealed byte TypeIndex => 2;
@@ -150,6 +165,9 @@ namespace MinecraftNBTLibrary
 
     }
 
+    /// <summary>
+    /// Int类型的节点
+    /// </summary>
     public class NBTNodeInt : NBTNodeData<int>
     {
         public static bool operator ==(NBTNodeInt a, NBTNodeInt b) => (a.Name == b.Name && a.Value == b.Value);
@@ -174,6 +192,9 @@ namespace MinecraftNBTLibrary
 
     }
 
+    /// <summary>
+    /// Long类型的节点
+    /// </summary>
     public class NBTNodeLong : NBTNodeData<long>
     {
         public override byte[] GetBytesForList() => BitConverter.GetBytes(Value).Reverse().ToArray();
@@ -198,6 +219,9 @@ namespace MinecraftNBTLibrary
 
     }
 
+    /// <summary>
+    /// 单精度浮点类型的节点
+    /// </summary>
     public class NBTNodeFloat : NBTNodeData<float>
     {
 
@@ -223,6 +247,9 @@ namespace MinecraftNBTLibrary
         }
     }
 
+    /// <summary>
+    /// 双精度浮点类型的节点
+    /// </summary>
     public class NBTNodeDouble : NBTNodeData<double>
     {
 
@@ -248,6 +275,10 @@ namespace MinecraftNBTLibrary
         }
     }
 
+    /// <summary>
+    /// 表示存储某种集合数据的NBT节点
+    /// </summary>
+    /// <typeparam name="T">集合中每一项的类型</typeparam>
     public abstract class NBTNodeDataCollection<T> : NBTNodeData<List<T>>, ICollection<T>
     {
         protected NBTNodeDataCollection(string name, List<T> data) : base(name, data)
@@ -276,6 +307,10 @@ namespace MinecraftNBTLibrary
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 
+    /// <summary>
+    /// 存有某数组类型数据的节点
+    /// </summary>
+    /// <typeparam name="T">数组中数据的类型</typeparam>
     public abstract class NBTNodeDataArray<T> : NBTNodeDataCollection<T>, IList<T>
     {
         protected NBTNodeDataArray(string name, List<T> data) : base(name, data)
@@ -294,6 +329,9 @@ namespace MinecraftNBTLibrary
 
     }
 
+    /// <summary>
+    /// 表示Byte数组类型的节点
+    /// </summary>
     public class NBTNodeByteArray : NBTNodeDataArray<byte>
     {
         public NBTNodeByteArray(string name, List<byte> data) : base(name, data) { }
@@ -329,6 +367,9 @@ namespace MinecraftNBTLibrary
         }
     }
 
+    /// <summary>
+    /// 存有一个字符串的NBT节点
+    /// </summary>
     public class NBTNodeString : NBTNodeData<string>
     {
         public NBTNodeString(string name, string data) : base(name, data) { }
@@ -361,6 +402,10 @@ namespace MinecraftNBTLibrary
         }
     }
 
+
+    /// <summary>
+    /// 表示Int数组类型的节点
+    /// </summary>
     public class NBTNodeIntArray : NBTNodeDataArray<int>
     {
 
@@ -402,6 +447,9 @@ namespace MinecraftNBTLibrary
         }
     }
 
+    /// <summary>
+    /// 表示Long数组类型的节点
+    /// </summary>
     public class NBTNodeLongArray : NBTNodeDataArray<long>
     {
         public NBTNodeLongArray(string name, List<long> data) : base(name, data) { }
@@ -442,7 +490,9 @@ namespace MinecraftNBTLibrary
         }
     }
 
-
+    /// <summary>
+    /// 枚举：NBT节点的所有类型
+    /// </summary>
     public enum NBTNodeType
     {
         End = 0,
@@ -460,7 +510,9 @@ namespace MinecraftNBTLibrary
         Long_Array = 12
     }
 
+    /// <summary>
+    /// 所提供的NBTNode不合要求时引发此异常
+    /// </summary>
     public class WrongDataTypeException : Exception { }
 
-    public class ManagedValueException : Exception { }
 }
