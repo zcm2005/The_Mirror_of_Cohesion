@@ -26,5 +26,5 @@ https://github.com/zcm2005/The_Mirror_of_Cohesion
 
 
 本项目以AGPL-3.0-only许可证授权。
-This program is released under license AGPL-3.0-only.
+本文件的描述如与许可证有任何出入，以许可证为准。
 
