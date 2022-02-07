@@ -3,6 +3,7 @@
 
 本项目希望创建一组基于最新的.Net平台的易于使用、高效、精准、跨操作系统的Minecraft存档编辑工具。目前其中的NBT库已可用，剩余部分仍在开发中。
 
+NBT库已在nuget上发布，名称是"MocNBT"，链接：https://www.nuget.org/packages/MoCNBT/
 
 计划优先对最新的Java版存档提供支持，未来可能会考虑支持基岩版或老版本，但不确定。
 

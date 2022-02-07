@@ -2,6 +2,8 @@
 
 This project is expected to be a set of Minecraft level tools using the lastest .Net platform, which are cross-platform, efficient, accurate, and easy to use. The NBT Library is now available, while others are still developing.
 
+The NBT Library on nuget is named MocNBT, which can be found here: https://www.nuget.org/packages/MoCNBT/
+
 I plan to support the lastest Java version of Minecraft first, but may also support Bedrock of old versions if it is needed.
 
 You may incur loss when using these software, but THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY APPLICABLE LAW, since the project is totally free. Please make proper backups before using.
