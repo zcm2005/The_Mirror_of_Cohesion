@@ -32,6 +32,7 @@ namespace MinecraftNBTLibrary
 
     /// <summary>
     /// 此为抽象的NBTNode类，是所有NBT节点的父级
+    /// The abstract NBTNode class, which is base of all NBTNodes.
     /// </summary>
     public abstract class NBTNode
     {
@@ -43,12 +44,15 @@ namespace MinecraftNBTLibrary
 
         /// <summary>
         /// 将此节点输出为byte[]格式
+        /// Return a byte array, which contains all data in this node using standard format.
         /// </summary>
         /// <returns></returns>
         public abstract byte[] ToBytes();
 
         /// <summary>
         /// 枚举形式的标签类型，与数值形式对应
+        /// Represent the type of this node using an enum.
+        /// Correspond to the TypeIndex.
         /// </summary>
         public NBTNodeType Type { private init; get; }
 
@@ -56,11 +60,13 @@ namespace MinecraftNBTLibrary
 
         /// <summary>
         /// 表示此节点的父节点
+        /// Point to the parent node of this node (if exists).
         /// </summary>
         public NBTNode? Parent;
         
         /// <summary>
         /// 输出不含前缀的byte[]类型节点，用于存储在list节点中
+        /// Return a byte array which doesn't contain the pre bytes, used by NBTNodeList.
         /// </summary>
         /// <returns></returns>
         public abstract byte[] GetBytesForList();
@@ -70,6 +76,7 @@ namespace MinecraftNBTLibrary
 
     /// <summary>
     /// End节点，仅一字节，为0x00
+    /// Only a byte which is 0x00.
     /// </summary>
     public class NBTNodeEnd : NBTNode
     {
@@ -96,6 +103,7 @@ namespace MinecraftNBTLibrary
 
     /// <summary>
     /// 表示存有数据的节点，不应也不能再继承此类
+    /// Represent a NBT node which contains data.
     /// </summary>
     /// <typeparam name="T">数据的类型，仅能填为支持的几种之一</typeparam>
     public abstract class NBTNodeData<T> : NBTNode
@@ -325,6 +333,7 @@ namespace MinecraftNBTLibrary
 
         /// <summary>
         /// 不建议使用
+        /// Not recommended.
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
@@ -334,6 +343,7 @@ namespace MinecraftNBTLibrary
 
         /// <summary>
         /// 不建议使用
+        /// Not recommended.
         /// </summary>
         /// <param name="item"></param>
         /// <returns></returns>
@@ -505,6 +515,7 @@ namespace MinecraftNBTLibrary
 
     /// <summary>
     /// 枚举：NBT节点的所有类型
+    /// An enum which represents the type of node.
     /// </summary>
     public enum NBTNodeType
     {
@@ -524,7 +535,8 @@ namespace MinecraftNBTLibrary
     }
 
     /// <summary>
-    /// 所提供的NBTNode不合要求时引发此异常
+    /// 所提供的NBTNode类型错误时引发此异常
+    /// This exception will be thrown when the type of the NBTNode you provide is incorrect.
     /// </summary>
     public class WrongDataTypeException : Exception { }
 

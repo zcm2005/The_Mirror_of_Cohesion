@@ -36,6 +36,7 @@ namespace MinecraftNBTLibrary
         /// <param name="tagid">以数值形式表示的类型</param>
         /// <param name="node">给定一个NBTNode</param>
         /// <returns></returns>
+        [Obsolete("请直接使用Types属性和TypeIndex来判断")]
         public static bool TypeIsRight(byte tagid, NBTNode node) => TypeIsRight((NBTNodeType)tagid, node);
 
         /// <summary>
@@ -44,6 +45,7 @@ namespace MinecraftNBTLibrary
         /// <param name="type">以枚举形式表示的类型</param>
         /// <param name="node">给定一个NBTNode</param>
         /// <returns></returns>
+        [Obsolete("请直接使用Types属性和TypeIndex来判断")]
         public static bool TypeIsRight(NBTNodeType type, NBTNode node)
         {
             bool flag = false;
@@ -94,6 +96,7 @@ namespace MinecraftNBTLibrary
 
         /// <summary>
         /// 从byte[]形式的NBT中解析出NBTNode
+        /// Parse from a byte array which has standard syntax.
         /// </summary>
         /// <param name="origin"></param>
         /// <returns></returns>
@@ -101,6 +104,7 @@ namespace MinecraftNBTLibrary
 
         /// <summary>
         /// 从byte[]形式的NBT中解析出NBTNode
+        /// Parse from a byte array which has standard syntax.
         /// </summary>
         /// <param name="origin"></param>
         /// <param name="pos">起始的位置</param>
@@ -109,6 +113,7 @@ namespace MinecraftNBTLibrary
 
         /// <summary>
         /// 从byte[]形式的NBT中解析出NBTNode
+        /// Parse from a byte array which has standard syntax.
         /// </summary>
         /// <param name="origin">从此解析</param>
         /// <param name="startindex">起始的位置</param>
@@ -340,6 +345,7 @@ namespace MinecraftNBTLibrary
 
         /// <summary>
         /// 从流解析出NBTNode
+        /// Parse from stream which has standard syntax.
         /// </summary>
         /// <param name="s"></param>
         /// <returns></returns>
@@ -358,6 +364,7 @@ namespace MinecraftNBTLibrary
 
         /// <summary>
         /// 从GZip压缩文件解析出NBTNode。一般来说，Minecraft中的.dat文件都是GZip压缩文件。
+        /// Parse from a GZip file. The files named *.dat are such file in general.
         /// </summary>
         /// <param name="path">文件路径</param>
         /// <returns></returns>
@@ -383,7 +390,8 @@ namespace MinecraftNBTLibrary
     }
 
     /// <summary>
-    /// 无法正确解析给定的数组时，抛出此异常
+    /// 无法正确解析给定的数据时，抛出此异常
+    /// This exception will be thrown when the data you provide can not be parsed correctly.
     /// </summary>
     public class WrongSyntaxException : Exception { }
 
