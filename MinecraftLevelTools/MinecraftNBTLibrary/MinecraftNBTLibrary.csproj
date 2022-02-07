@@ -5,7 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>0.2.1</Version>
+    <Version>0.2.2</Version>
     <Authors>ZCM</Authors>
     <Product>The Mirror of Cohesion</Product>
     <Copyright>AGPL-3.0-only</Copyright>
