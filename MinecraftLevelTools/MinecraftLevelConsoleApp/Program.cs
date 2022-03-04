@@ -28,7 +28,7 @@ Console.WriteLine("本程序是与核心库配套发布的命令行工具，主�
 Console.WriteLine("在完成核心库后，可能会制作配套的图形界面工具。");
 
 string path=Console.ReadLine();
-var c=NBT.ParseFromCompressedNBTFile(path);
+NBTNode c=NBT.ParseFromCompressedNBTFile(path);
 var d=File.Create(".\\out.nbt");
 var e=c.ToBytes();
 d.Write(e, 0, e.Length);

@@ -251,7 +251,7 @@ namespace MinecraftNBTLibrary
                                 {
                                     temp[3 + j - pos] = origin[j];
                                 }
-                                t.Add(ParseFromBytes(temp, 0, null, out int a));
+                                t.Add(ParseFromBytes(temp, 0, t, out int a));
                                 pos += a - 3;
                             }
                             length = pos - startindex;
@@ -267,7 +267,7 @@ namespace MinecraftNBTLibrary
                             int pos = v;
                             while (origin[pos] != 0)
                             {
-                                t.Add(ParseFromBytes(origin, pos, null, out int a));
+                                t.Add(ParseFromBytes(origin, pos, t, out int a));
                                 pos += a;
                             }
                             length = pos - startindex + 1;
@@ -372,14 +372,12 @@ namespace MinecraftNBTLibrary
         {
             var t = File.OpenRead(path);
             var g = new GZipStream(t, CompressionMode.Decompress);
-            t.Close();
             return ParseFromStream(g);
         }
 
         /// <summary>
         /// 写为GZip压缩的文件
         /// </summary>
-        /// <param name=""></param>
         public static void WriteToCompressedNBTFile(NBTNode t, string path)
         {
             var f = File.Open(path, FileMode.Create, FileAccess.Write, FileShare.None);
