@@ -63,8 +63,9 @@ namespace MinecraftNBTLibrary
         /// Point to the parent node of this node (if exists).
         /// </summary>
         public NBTNode? Parent;
-        
 
+
+        public abstract byte[] GetBytesForList();
 
 
     }
@@ -81,6 +82,10 @@ namespace MinecraftNBTLibrary
 
         internal override sealed byte TypeIndex => 0;
 
+        public override byte[] GetBytesForList()
+        {
+            throw new NotImplementedException();
+        }
 
         public override byte[] ToBytes()
         {
@@ -126,7 +131,6 @@ namespace MinecraftNBTLibrary
             return bytes;
         }
 
-        public abstract byte[] GetBytesForList();
 
 
         public override byte[] ToBytes()
