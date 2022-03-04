@@ -83,55 +83,6 @@ namespace MinecraftNBTLibrary
             }
         }
 
-        /*
-        public override byte[] ToBytes()
-        {
-            if (Value.Count == 0)
-            {
-                byte[] pre = GetPreBytes();
-                int length = 0;
-                length += pre.Length;
-                length += 5;
-                byte[] result = new byte[length];
-                pre.CopyTo(result, 0);
-                result[pre.Length] = 0;
-                result[pre.Length + 1] = (byte)(Value.Count >> 24);
-                result[pre.Length + 2] = (byte)(Value.Count >> 16);
-                result[pre.Length + 3] = (byte)(Value.Count >> 8);
-                result[pre.Length + 4] = (byte)Value.Count;
-                return result;
-            }
-            else
-            {
-                byte[] pre = GetPreBytes();
-                byte[][] load = new byte[Value.Count][];
-                int length = 0;
-                length += pre.Length;
-                length += 5;
-                for (int i = 0; i < Value.Count; i++)
-                {
-                    load[i] = Value[i].GetBytesForList();
-                    length += load[i].Length;
-                }
-                byte[] result = new byte[length];
-                pre.CopyTo(result, 0);
-                result[pre.Length] = Value[0].TypeIndex;
-                result[pre.Length + 1] = (byte)(Value.Count >> 24);
-                result[pre.Length + 2] = (byte)(Value.Count >> 16);
-                result[pre.Length + 3] = (byte)(Value.Count >> 8);
-                result[pre.Length + 4] = (byte)Value.Count;
-                int pos = pre.Length + 5;
-                for (int i = 0; i < Value.Count; i++)
-                {
-                    load[i].CopyTo(result, pos);
-                    pos += load[i].Length;
-                }
-                return result;
-            }
-        }
-        */
-
-
         public override byte[] GetBytesForList()
         {
             if (Value.Count == 0)

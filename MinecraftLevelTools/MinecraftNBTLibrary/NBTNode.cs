@@ -159,7 +159,7 @@ namespace MinecraftNBTLibrary
 
         public NBTNodeByte(string name, byte data) : base(name, data) { }
 
-        public override byte[] GetBytesForList() => BitConverter.GetBytes(Value).Reverse().ToArray();
+        public override byte[] GetBytesForList() => new byte[1] { Value };
 
         public override byte[] ToBytes()
         {
@@ -183,7 +183,7 @@ namespace MinecraftNBTLibrary
 
         public NBTNodeShort(string name, short data) : base(name, data) { }
 
-        public override byte[] GetBytesForList() => BitConverter.GetBytes(Value).Reverse().ToArray();
+        public override byte[] GetBytesForList() => new byte[2] { (byte)(Value >> 8), (byte)Value };
 
 
     }
@@ -197,7 +197,7 @@ namespace MinecraftNBTLibrary
         public static bool operator !=(NBTNodeInt a, NBTNodeInt b) => (a.Name != b.Name || a.Value != b.Value);
 
         public NBTNodeInt(string name, int data) : base(name, data) { }
-        public override byte[] GetBytesForList() => BitConverter.GetBytes(Value).Reverse().ToArray();
+        public override byte[] GetBytesForList() => new byte[4] { (byte)(Value >> 24), (byte)(Value >> 16), (byte)(Value >> 8), (byte)Value };
 
 
 
@@ -211,7 +211,7 @@ namespace MinecraftNBTLibrary
     /// </summary>
     public class NBTNodeLong : NBTNodeData<long>
     {
-        public override byte[] GetBytesForList() => BitConverter.GetBytes(Value).Reverse().ToArray();
+        public override byte[] GetBytesForList() => new byte[8] { (byte)(Value >> 56), (byte)(Value >> 48), (byte)(Value >> 40), (byte)(Value >> 32), (byte)(Value >> 24), (byte)(Value >> 16), (byte)(Value >> 8), (byte)Value };
 
         public static bool operator ==(NBTNodeLong a, NBTNodeLong b) => (a.Name == b.Name && a.Value == b.Value);
         public static bool operator !=(NBTNodeLong a, NBTNodeLong b) => (a.Name != b.Name || a.Value != b.Value);
@@ -384,7 +384,11 @@ namespace MinecraftNBTLibrary
             result[3] = (byte)(Value.Count);
             for (int i = 0; i < Value.Count; i++)
             {
-                BitConverter.GetBytes(Value[i]).Reverse().ToArray().CopyTo(result, 4 + i * 4);
+                result[4 + i * 4] = (byte)(Value[i] >> 24);
+                result[4 + i * 4 + 1] = (byte)(Value[i] >> 16);
+                result[4 + i * 4 + 2] = (byte)(Value[i] >> 8);
+                result[4 + i * 4 + 3] = (byte)Value[i];
+
             }
             return result;
         }
@@ -411,7 +415,14 @@ namespace MinecraftNBTLibrary
             result[3] = (byte)(Value.Count);
             for (int i = 0; i < Value.Count; i++)
             {
-                BitConverter.GetBytes(Value[i]).Reverse().ToArray().CopyTo(result, 4 + i * 8);
+                result[4 + i * 4] = (byte)(Value[i] >> 56);
+                result[4 + i * 4 + 1] = (byte)(Value[i] >> 48);
+                result[4 + i * 4 + 2] = (byte)(Value[i] >> 40);
+                result[4 + i * 4 + 3] = (byte)(Value[i] >> 32);
+                result[4 + i * 4 + 4] = (byte)(Value[i] >> 24);
+                result[4 + i * 4 + 5] = (byte)(Value[i] >> 16);
+                result[4 + i * 4 + 6] = (byte)(Value[i] >> 8);
+                result[4 + i * 4 + 7] = (byte)Value[i];
             }
             return result;
         }
