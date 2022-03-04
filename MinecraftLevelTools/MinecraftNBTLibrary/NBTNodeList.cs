@@ -83,7 +83,7 @@ namespace MinecraftNBTLibrary
             }
         }
 
-
+        /*
         public override byte[] ToBytes()
         {
             if (Value.Count == 0)
@@ -129,35 +129,47 @@ namespace MinecraftNBTLibrary
                 return result;
             }
         }
+        */
+
 
         public override byte[] GetBytesForList()
         {
             if (Value.Count == 0)
             {
-                throw new EmptyListException();
+                int length = 0;
+                length += 5;
+                byte[] result = new byte[length];
+                result[0] = 0;
+                result[1] = (byte)(Value.Count >> 24);
+                result[2] = (byte)(Value.Count >> 16);
+                result[3] = (byte)(Value.Count >> 8);
+                result[4] = (byte)Value.Count;
+                return result;
             }
-            byte[] pre = GetPreBytes();
-            byte[][] load = new byte[Value.Count][];
-            int length = 0;
-            length += 5;
-            for (int i = 0; i < Value.Count; i++)
+            else
             {
-                load[i] = Value[i].GetBytesForList();
-                length += load[i].Length;
+                byte[][] load = new byte[Value.Count][];
+                int length = 0;
+                length += 5;
+                for (int i = 0; i < Value.Count; i++)
+                {
+                    load[i] = Value[i].GetBytesForList();
+                    length += load[i].Length;
+                }
+                byte[] result = new byte[length];
+                result[0] = Value[0].TypeIndex;
+                result[1] = (byte)(Value.Count >> 24);
+                result[2] = (byte)(Value.Count >> 16);
+                result[3] = (byte)(Value.Count >> 8);
+                result[4] = (byte)Value.Count;
+                int pos = 5;
+                for (int i = 0; i < Value.Count; i++)
+                {
+                    load[i].CopyTo(result, pos);
+                    pos += load[i].Length;
+                }
+                return result;
             }
-            byte[] result = new byte[length];
-            result[0] = Value[0].TypeIndex;
-            result[1] = (byte)(Value.Count >> 24);
-            result[2] = (byte)(Value.Count >> 16);
-            result[ 3] = (byte)(Value.Count >> 8);
-            result[ 4] = (byte)Value.Count;
-            int pos = pre.Length + 5;
-            for (int i = 0; i < Value.Count; i++)
-            {
-                load[i].CopyTo(result, pos);
-                pos += load[i].Length;
-            }
-            return result;
         }
     }
 
