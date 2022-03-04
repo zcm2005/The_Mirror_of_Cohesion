@@ -64,12 +64,7 @@ namespace MinecraftNBTLibrary
         /// </summary>
         public NBTNode? Parent;
         
-        /// <summary>
-        /// 输出不含前缀的byte[]类型节点，用于存储在list节点中
-        /// Return a byte array which doesn't contain the pre bytes, used by NBTNodeList.
-        /// </summary>
-        /// <returns></returns>
-        public abstract byte[] GetBytesForList();
+
 
 
     }
@@ -86,10 +81,6 @@ namespace MinecraftNBTLibrary
 
         internal override sealed byte TypeIndex => 0;
 
-        public override byte[] GetBytesForList()
-        {
-            throw new NotImplementedException();
-        }
 
         public override byte[] ToBytes()
         {
@@ -135,6 +126,19 @@ namespace MinecraftNBTLibrary
             return bytes;
         }
 
+        public abstract byte[] GetBytesForList();
+
+
+        public override byte[] ToBytes()
+        {
+            byte[] pre = GetPreBytes();
+            byte[] data = GetBytesForList();
+            byte[] result = new byte[pre.Length + data.Length];
+            pre.CopyTo(result, 0);
+            data.CopyTo(result, pre.Length);
+            return result;
+        }
+
 
     }
 
@@ -178,16 +182,6 @@ namespace MinecraftNBTLibrary
         public override byte[] GetBytesForList() => BitConverter.GetBytes(Value).Reverse().ToArray();
 
 
-        public override byte[] ToBytes()
-        {
-            byte[] pre = GetPreBytes();
-            byte[] data = BitConverter.GetBytes(Value).Reverse().ToArray();
-            byte[] result = new byte[pre.Length + data.Length];
-            pre.CopyTo(result, 0);
-            data.CopyTo(result, pre.Length);
-            return result;
-        }
-
     }
 
     /// <summary>
@@ -202,15 +196,6 @@ namespace MinecraftNBTLibrary
         public override byte[] GetBytesForList() => BitConverter.GetBytes(Value).Reverse().ToArray();
 
 
-        public override byte[] ToBytes()
-        {
-            byte[] pre = GetPreBytes();
-            byte[] data = BitConverter.GetBytes(Value).Reverse().ToArray();
-            byte[] result = new byte[pre.Length + data.Length];
-            pre.CopyTo(result, 0);
-            data.CopyTo(result, pre.Length);
-            return result;
-        }
 
 
         internal override sealed byte TypeIndex => 3;
@@ -232,15 +217,6 @@ namespace MinecraftNBTLibrary
         public NBTNodeLong(string name, long data) : base(name, data) { }
 
 
-        public override byte[] ToBytes()
-        {
-            byte[] pre = GetPreBytes();
-            byte[] data = BitConverter.GetBytes(Value).Reverse().ToArray();
-            byte[] result = new byte[pre.Length + data.Length];
-            pre.CopyTo(result, 0);
-            data.CopyTo(result, pre.Length);
-            return result;
-        }
 
     }
 
@@ -261,15 +237,6 @@ namespace MinecraftNBTLibrary
         internal override sealed byte TypeIndex => 5;
 
 
-        public override byte[] ToBytes()
-        {
-            byte[] pre = GetPreBytes();
-            byte[] data = BitConverter.GetBytes(Value).Reverse().ToArray();
-            byte[] result = new byte[pre.Length + data.Length];
-            pre.CopyTo(result, 0);
-            data.CopyTo(result, pre.Length);
-            return result;
-        }
     }
 
     /// <summary>
@@ -288,16 +255,6 @@ namespace MinecraftNBTLibrary
 
         internal override sealed byte TypeIndex => 6;
 
-
-        public override byte[] ToBytes()
-        {
-            byte[] pre = GetPreBytes();
-            byte[] data = BitConverter.GetBytes(Value).Reverse().ToArray();
-            byte[] result = new byte[pre.Length + data.Length];
-            pre.CopyTo(result, 0);
-            data.CopyTo(result, pre.Length);
-            return result;
-        }
     }
 
 
@@ -365,18 +322,6 @@ namespace MinecraftNBTLibrary
         internal override sealed byte TypeIndex => 7;
 
 
-        public override byte[] ToBytes()
-        {
-            byte[] pre = GetPreBytes();
-            byte[] result = new byte[pre.Length + 4 + Value.Count];
-            pre.CopyTo(result, 0);
-            result[pre.Length] = (byte)(Value.Count >> 24);
-            result[pre.Length + 1] = (byte)(Value.Count >> 16);
-            result[pre.Length + 2] = (byte)(Value.Count >> 8);
-            result[pre.Length + 3] = (byte)(Value.Count);
-            Value.CopyTo(result, pre.Length + 4);
-            return result;
-        }
 
         public override byte[] GetBytesForList()
         {
@@ -410,19 +355,6 @@ namespace MinecraftNBTLibrary
             content.CopyTo(result, 2);
             return result;
         }
-
-        public override byte[] ToBytes()
-        {
-            byte[] pre = GetPreBytes();
-            byte[] content;
-            content = Encoding.UTF8.GetBytes(Value);
-            byte[] result = new byte[pre.Length + 2 + content.Length];
-            pre.CopyTo(result, 0);
-            result[pre.Length + 1] = (byte)content.Length;
-            result[pre.Length] = (byte)(content.Length >> 8);
-            content.CopyTo(result, pre.Length + 2);
-            return result;
-        }
     }
 
 
@@ -453,21 +385,6 @@ namespace MinecraftNBTLibrary
             return result;
         }
 
-        public override byte[] ToBytes()
-        {
-            byte[] pre = GetPreBytes();
-            byte[] result = new byte[pre.Length + 4 + Value.Count * 4];
-            pre.CopyTo(result, 0);
-            result[pre.Length] = (byte)(Value.Count >> 24);
-            result[pre.Length + 1] = (byte)(Value.Count >> 16);
-            result[pre.Length + 2] = (byte)(Value.Count >> 8);
-            result[pre.Length + 3] = (byte)(Value.Count);
-            for (int i = 0; i < Value.Count; i++)
-            {
-                BitConverter.GetBytes(Value[i]).Reverse().ToArray().CopyTo(result, pre.Length + 4 + i * 4);
-            }
-            return result;
-        }
     }
 
     /// <summary>
@@ -495,22 +412,6 @@ namespace MinecraftNBTLibrary
             return result;
         }
 
-
-        public override byte[] ToBytes()
-        {
-            byte[] pre = GetPreBytes();
-            byte[] result = new byte[pre.Length + 4 + Value.Count * 8];
-            pre.CopyTo(result, 0);
-            result[pre.Length] = (byte)(Value.Count >> 24);
-            result[pre.Length + 1] = (byte)(Value.Count >> 16);
-            result[pre.Length + 2] = (byte)(Value.Count >> 8);
-            result[pre.Length + 3] = (byte)(Value.Count);
-            for (int i = 0; i < Value.Count; i++)
-            {
-                BitConverter.GetBytes(Value[i]).Reverse().ToArray().CopyTo(result, pre.Length + 4 + i * 8);
-            }
-            return result;
-        }
     }
 
     /// <summary>
