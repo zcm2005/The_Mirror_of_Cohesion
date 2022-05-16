@@ -42,11 +42,6 @@ namespace MinecraftNBTLibrary
         {
         }
 
-        private static void CheckIsData(NBTNode item)
-        {
-            if (item.Type == NBTNodeType.End)
-                throw new WrongDataTypeException();
-        }
 
         /*private void CheckIsData(NBTNode item)
 {
@@ -89,12 +84,7 @@ namespace MinecraftNBTLibrary
         }
 
 
-        public virtual void Add(NBTNodeDataBase item)
-        {
-            CheckIsData(item);
 
-            base.Add(item);
-        }
 
     }
     public class NBTNodeCompound : NBTNodeCompoundBase
