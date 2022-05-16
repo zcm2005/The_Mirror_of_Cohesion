@@ -97,15 +97,20 @@ namespace MinecraftNBTLibrary
 
     }
 
+
+    public abstract class NBTNodeDataBase : NBTNode
+    {
+        public string Name;
+    }
+
+
     /// <summary>
     /// 表示存有数据的节点，不应也不能再继承此类
     /// Represent a NBT node which contains data.
     /// </summary>
     /// <typeparam name="T">数据的类型，仅能填为支持的几种之一</typeparam>
-    public abstract class NBTNodeData<T> : NBTNode
+    public abstract class NBTNodeData<T> : NBTNodeDataBase
     {
-
-        public string Name;
 
 
         public NBTNodeData(string name, T data) : base()

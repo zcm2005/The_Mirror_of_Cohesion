@@ -89,9 +89,10 @@ namespace MinecraftNBTLibrary
         }
 
 
-        public override void Add(NBTNode item)
+        public virtual void Add(NBTNodeDataBase item)
         {
             CheckIsData(item);
+
             base.Add(item);
         }
 
@@ -106,6 +107,12 @@ namespace MinecraftNBTLibrary
         {
         }
 
+        public override void Add(NBTNodeDataBase item)
+        {
+            if (item.Name == null || item.Name.Length == 0)
+                throw new WrongDataTypeException();
+            base.Add(item);
+        }
 
 
         internal sealed override byte TypeIndex => 10;
@@ -130,6 +137,23 @@ namespace MinecraftNBTLibrary
             }
             result[result.Length - 1] = 0;//NBTNodeEnd
             return result;
+        }
+
+        /// <summary>
+        /// 通过名称搜索包含的节点
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns>若不存在，返回-1</returns>
+        public int SearchByName(string name)
+        {
+            for(int i=0;i<Count;i++)
+            {
+                if (((NBTNodeDataBase)Value[i]).Name == name)
+                {
+                    return i;
+                }
+            }
+            return -1;
         }
     }
 }
