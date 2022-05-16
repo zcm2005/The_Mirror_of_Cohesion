@@ -32,13 +32,13 @@ namespace MinecraftNBTLibrary
     /// <summary>
     /// 储存其他NBT节点的NBT节点
     /// </summary>
-    public abstract class NBTNodeCompoundBase : NBTNodeDataArray<NBTNode>
+    public abstract class NBTNodeCompoundBase : NBTNodeDataArray<NBTNodeDataBase>
     {
         public NBTNodeCompoundBase(string name) : base(name)
         {
         }
 
-        public NBTNodeCompoundBase(string name, List<NBTNode> data) : base(name, data)
+        public NBTNodeCompoundBase(string name, List<NBTNodeDataBase> data) : base(name, data)
         {
         }
 
@@ -69,7 +69,7 @@ namespace MinecraftNBTLibrary
 
 }*/
 
-        public override List<NBTNode> Value
+        public override List<NBTNodeDataBase> Value
         {
             get => base.Value;
             set
@@ -103,7 +103,7 @@ namespace MinecraftNBTLibrary
         {
         }
 
-        public NBTNodeCompound(string name, List<NBTNode> data) : base(name, data)
+        public NBTNodeCompound(string name, List<NBTNodeDataBase> data) : base(name, data)
         {
         }
 

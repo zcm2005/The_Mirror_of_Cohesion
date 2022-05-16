@@ -251,7 +251,7 @@ namespace MinecraftNBTLibrary
                                 {
                                     temp[3 + j - pos] = origin[j];
                                 }
-                                t.Add(ParseFromBytes(temp, 0, t, out int a));
+                                t.Add((NBTNodeDataBase)ParseFromBytes(temp, 0, t, out int a));
                                 pos += a - 3;
                             }
                             length = pos - startindex;
@@ -267,7 +267,7 @@ namespace MinecraftNBTLibrary
                             int pos = v;
                             while (origin[pos] != 0)
                             {
-                                t.Add(ParseFromBytes(origin, pos, t, out int a));
+                                t.Add((NBTNodeDataBase)ParseFromBytes(origin, pos, t, out int a));
                                 pos += a;
                             }
                             length = pos - startindex + 1;

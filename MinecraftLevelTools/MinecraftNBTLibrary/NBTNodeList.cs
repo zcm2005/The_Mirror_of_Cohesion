@@ -35,7 +35,7 @@ namespace MinecraftNBTLibrary
     /// </summary>
     public class NBTNodeList : NBTNodeCompoundBase
     {
-        public NBTNodeList(string name, List<NBTNode> data) : base(name, data)
+        public NBTNodeList(string name, List<NBTNodeDataBase> data) : base(name, data)
         {
             if (data.Count > 0)
                 for (int i = 1; i < data.Count; i++)
@@ -47,12 +47,12 @@ namespace MinecraftNBTLibrary
                 }
         }
 
-        public NBTNodeList(string name) : this(name, new List<NBTNode>()) { }
+        public NBTNodeList(string name) : this(name, new List<NBTNodeDataBase>()) { }
 
 
         internal sealed override byte TypeIndex => 9;
 
-        public override void Add(NBTNode item)
+        public override void Add(NBTNodeDataBase item)
         {
             if (Value.Count > 0)
             {
@@ -64,7 +64,7 @@ namespace MinecraftNBTLibrary
             base.Add(item);
         }
 
-        public override List<NBTNode> Value
+        public override List<NBTNodeDataBase> Value
         {
             get => base.Value;
             set
